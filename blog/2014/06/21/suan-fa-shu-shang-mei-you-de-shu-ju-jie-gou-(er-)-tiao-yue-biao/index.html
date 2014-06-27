@@ -215,7 +215,7 @@ zskiplistNode *zslInsert(zskiplist *zsl, double score, robj *obj) {
 
 <p>该函数按照上一节算法描述，从表头最高层开始，找到新节点要插入的位置，同时记录每一层次上最后经过的节点。然后初始化一个新的节点，随机得到该节点的有效链接层数，然后将节点插入并更新各层的链接。</p>
 
-<p>对redis源代码感兴趣的读者，可以参考我对redis 2.8.9代码添加注释的<a href="https://github.com/zionwu">repos</a>。</p>
+<p>对redis源代码感兴趣的读者，可以参考我对redis 2.8.9代码添加注释的<a href="https://github.com/zionwu/redis-2.8.9-annotation">repos</a>。</p>
 
 <h3>总结</h3>
 
