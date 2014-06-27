@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: java | My Octopress Blog]]></title>
-  <link href="http://yoursite.com/blog/categories/java/atom.xml" rel="self"/>
-  <link href="http://yoursite.com/"/>
-  <updated>2014-06-27T22:02:35+08:00</updated>
-  <id>http://yoursite.com/</id>
+  <link href="http://zionwu.github.io/blog/categories/java/atom.xml" rel="self"/>
+  <link href="http://zionwu.github.io/"/>
+  <updated>2014-06-27T22:18:01+08:00</updated>
+  <id>http://zionwu.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Effective Java Note-2]]></title>
-    <link href="http://yoursite.com/blog/2013/05/02/effective-java-note-2/"/>
+    <link href="http://zionwu.github.io/blog/2013/05/02/effective-java-note-2/"/>
     <updated>2013-05-02T00:18:00+08:00</updated>
-    <id>http://yoursite.com/blog/2013/05/02/effective-java-note-2</id>
+    <id>http://zionwu.github.io/blog/2013/05/02/effective-java-note-2</id>
     <content type="html"><![CDATA[<h2>创建与销毁对象</h2>
 
 <h3>遇到多个构造器参数时考虑用构建器</h3>
@@ -178,9 +178,9 @@
   
   <entry>
     <title type="html"><![CDATA[effective java note-1]]></title>
-    <link href="http://yoursite.com/blog/2013/04/25/effective-java-note-1/"/>
+    <link href="http://zionwu.github.io/blog/2013/04/25/effective-java-note-1/"/>
     <updated>2013-04-25T23:41:00+08:00</updated>
-    <id>http://yoursite.com/blog/2013/04/25/effective-java-note-1</id>
+    <id>http://zionwu.github.io/blog/2013/04/25/effective-java-note-1</id>
     <content type="html"><![CDATA[<h2>前言</h2>
 
 <p>对于Effective java，有人初看时可能会觉得这本书讲的都是java的一些技巧。书中确实介绍了很多更好的使用java特性的技巧。但是，本书的精华在于怎么用写API的思想来编写程序。在微薄上看到陈皓老师的一条微薄，印象深刻，大致意思是目前很多程序员仍然带着写应用的思想在写程序，而不是从写平台API提供者的角度来写。这一系列的读书笔记将突出书中的API编写思想。注：本文的读者需要对面向对象编程(Object Oriented Programming)有一定的了解。</p>

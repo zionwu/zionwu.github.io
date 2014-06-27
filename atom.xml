@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[My Octopress Blog]]></title>
-  <link href="http://yoursite.com/atom.xml" rel="self"/>
-  <link href="http://yoursite.com/"/>
-  <updated>2014-06-27T22:02:35+08:00</updated>
-  <id>http://yoursite.com/</id>
+  <link href="http://zionwu.github.io/atom.xml" rel="self"/>
+  <link href="http://zionwu.github.io/"/>
+  <updated>2014-06-27T22:18:01+08:00</updated>
+  <id>http://zionwu.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[算法书上没有的数据结构（二）-跳跃表]]></title>
-    <link href="http://yoursite.com/blog/2014/06/21/suan-fa-shu-shang-mei-you-de-shu-ju-jie-gou-(er-)-tiao-yue-biao/"/>
+    <link href="http://zionwu.github.io/blog/2014/06/21/suan-fa-shu-shang-mei-you-de-shu-ju-jie-gou-(er-)-tiao-yue-biao/"/>
     <updated>2014-06-21T05:00:00+08:00</updated>
-    <id>http://yoursite.com/blog/2014/06/21/suan-fa-shu-shang-mei-you-de-shu-ju-jie-gou-(er-)-tiao-yue-biao</id>
+    <id>http://zionwu.github.io/blog/2014/06/21/suan-fa-shu-shang-mei-you-de-shu-ju-jie-gou-(er-)-tiao-yue-biao</id>
     <content type="html"><![CDATA[<h2>跳跃表</h2>
 
 <h3>什么是跳跃表</h3>
@@ -179,9 +179,9 @@ zskiplistNode *zslInsert(zskiplist *zsl, double score, robj *obj) {
   
   <entry>
     <title type="html"><![CDATA[算法书上没有的数据结构（一）-后缀树]]></title>
-    <link href="http://yoursite.com/blog/2014/04/26/you-qu-de-shu-ju-jie-gou-(%5B%3F%5D-)-hou-zhui-shu/"/>
+    <link href="http://zionwu.github.io/blog/2014/04/26/you-qu-de-shu-ju-jie-gou-(%5B%3F%5D-)-hou-zhui-shu/"/>
     <updated>2014-04-26T01:47:00+08:00</updated>
-    <id>http://yoursite.com/blog/2014/04/26/you-qu-de-shu-ju-jie-gou-([?]-)-hou-zhui-shu</id>
+    <id>http://zionwu.github.io/blog/2014/04/26/you-qu-de-shu-ju-jie-gou-([?]-)-hou-zhui-shu</id>
     <content type="html"><![CDATA[<h2>前言</h2>
 
 <p>这个系列的文章将介绍一些在一般算法书上很少提到，但是在实际应用中却发挥着重要作用的数据结构。希望读者通过学习这些数据结构的原理与应用，为日后工作学习中的编程添加了更多选择。</p>
@@ -294,9 +294,9 @@ zskiplistNode *zslInsert(zskiplist *zsl, double score, robj *obj) {
   
   <entry>
     <title type="html"><![CDATA[荐书-The Little Schemer]]></title>
-    <link href="http://yoursite.com/blog/2014/04/07/jian-shu-the-little-schemer/"/>
+    <link href="http://zionwu.github.io/blog/2014/04/07/jian-shu-the-little-schemer/"/>
     <updated>2014-04-07T23:45:00+08:00</updated>
-    <id>http://yoursite.com/blog/2014/04/07/jian-shu-the-little-schemer</id>
+    <id>http://zionwu.github.io/blog/2014/04/07/jian-shu-the-little-schemer</id>
     <content type="html"><![CDATA[<p>上周末看了《<a href="http://book.douban.com/subject/1632977/">The Little Schemer</a>》这本书。第一次接触scheme是看<a href="http://mitpress.mit.edu/sicp/full-text/book/book.html">SICP</a>的时候，当时就喜欢上了scheme这样美妙的语言。后来发现了The Little Schemer这本书，网上评价颇高，而且篇幅也不多只有200多页。于是利用周末两天的时间看了下来。</p>
 
 <p>这本书适合没有没有学习过scheme，甚至没有学习过编程的人看，它讲的内容大多是与scheme相关的入门知识。不像java或者C这些命令式编程语言，语法或者需要了解的知识都比较多，容易让初学者生畏。而scheme则是函数式的编程语言（但是并非纯的函数式语言，因为scheme支持对变量的赋值），语法十分简单。</p>
@@ -373,9 +373,9 @@ The primitive eq&#8217;l takes two arguments. Each must be a non-numeric atom.</
   
   <entry>
     <title type="html"><![CDATA[浅谈重构--《重构》读书笔记]]></title>
-    <link href="http://yoursite.com/blog/2014/03/25/zhong-gou/"/>
+    <link href="http://zionwu.github.io/blog/2014/03/25/zhong-gou/"/>
     <updated>2014-03-25T21:09:00+08:00</updated>
-    <id>http://yoursite.com/blog/2014/03/25/zhong-gou</id>
+    <id>http://zionwu.github.io/blog/2014/03/25/zhong-gou</id>
     <content type="html"><![CDATA[<p>以前听到重构这个词的时候，第一印象对软件的代码做大规模的调整，仿佛当今遍地都在进行的事情&mdash;拆迁重建，推倒重来。因此也一直觉得重构是一项很高级的活动，自己可能还远没有这种重构的能力。而在工作中，随着自己对代码理解程度更好，而且全局把握也更好的情况下，我觉得很多一开始觉得不错的地方，现在看起来都还能有所改进。所以从数个月前，就觉得项目的代码需要重构了，但是基于对重构的浅薄的第一印象，又觉得抽不出时间来进行这么大的工程。直到看了《<a href="http://book.douban.com/subject/4262627/">重构</a>》这边书，我对“重构&#8221;的认识才有了翻天覆地的改变。</p>
 
 <h2>一. What-什么是重构</h2>
@@ -693,9 +693,9 @@ public class NullCustomer extends Customer implements Nullable {
   
   <entry>
     <title type="html"><![CDATA[Note for The C programming language]]></title>
-    <link href="http://yoursite.com/blog/2013/08/02/note-for-the-c-programming-language/"/>
+    <link href="http://zionwu.github.io/blog/2013/08/02/note-for-the-c-programming-language/"/>
     <updated>2013-08-02T23:08:00+08:00</updated>
-    <id>http://yoursite.com/blog/2013/08/02/note-for-the-c-programming-language</id>
+    <id>http://zionwu.github.io/blog/2013/08/02/note-for-the-c-programming-language</id>
     <content type="html"><![CDATA[<p>最近读了K&amp;R，也就是传说中的《The C programming language》。作为我第一门学习的语言，对C的喜爱不言而喻。有两年多没接触C，再次回顾，相比其Java和C++等高级语言, 其简洁优美的特性深深吸引了我。以下是阅读过程中在evernote中的一些摘要。</p>
 
 <p>1.You should note that we are using the words definition and declaration carefully when we refer to external variables in this section. Definition refers to the place where the variable is created or assigned storage; declaration refers to places where the nature of the variable is stated but no storage is allocated. <br/>
@@ -833,9 +833,9 @@ argv[0]是程序的名字，因此argc的值至少为1</p>
   
   <entry>
     <title type="html"><![CDATA[Effective Java Note-2]]></title>
-    <link href="http://yoursite.com/blog/2013/05/02/effective-java-note-2/"/>
+    <link href="http://zionwu.github.io/blog/2013/05/02/effective-java-note-2/"/>
     <updated>2013-05-02T00:18:00+08:00</updated>
-    <id>http://yoursite.com/blog/2013/05/02/effective-java-note-2</id>
+    <id>http://zionwu.github.io/blog/2013/05/02/effective-java-note-2</id>
     <content type="html"><![CDATA[<h2>创建与销毁对象</h2>
 
 <h3>遇到多个构造器参数时考虑用构建器</h3>
@@ -996,9 +996,9 @@ argv[0]是程序的名字，因此argc的值至少为1</p>
   
   <entry>
     <title type="html"><![CDATA[effective java note-1]]></title>
-    <link href="http://yoursite.com/blog/2013/04/25/effective-java-note-1/"/>
+    <link href="http://zionwu.github.io/blog/2013/04/25/effective-java-note-1/"/>
     <updated>2013-04-25T23:41:00+08:00</updated>
-    <id>http://yoursite.com/blog/2013/04/25/effective-java-note-1</id>
+    <id>http://zionwu.github.io/blog/2013/04/25/effective-java-note-1</id>
     <content type="html"><![CDATA[<h2>前言</h2>
 
 <p>对于Effective java，有人初看时可能会觉得这本书讲的都是java的一些技巧。书中确实介绍了很多更好的使用java特性的技巧。但是，本书的精华在于怎么用写API的思想来编写程序。在微薄上看到陈皓老师的一条微薄，印象深刻，大致意思是目前很多程序员仍然带着写应用的思想在写程序，而不是从写平台API提供者的角度来写。这一系列的读书笔记将突出书中的API编写思想。注：本文的读者需要对面向对象编程(Object Oriented Programming)有一定的了解。</p>
@@ -1156,9 +1156,9 @@ Map&lt;String, List&lt;String&gt;&gt; m = HashMap.newInstance()
   
   <entry>
     <title type="html"><![CDATA[写在2012的末尾]]></title>
-    <link href="http://yoursite.com/blog/2012/12/30/xie-zai-2012de-mo-wei/"/>
+    <link href="http://zionwu.github.io/blog/2012/12/30/xie-zai-2012de-mo-wei/"/>
     <updated>2012-12-30T23:17:00+08:00</updated>
-    <id>http://yoursite.com/blog/2012/12/30/xie-zai-2012de-mo-wei</id>
+    <id>http://zionwu.github.io/blog/2012/12/30/xie-zai-2012de-mo-wei</id>
     <content type="html"><![CDATA[<p>一转眼，就来到了12年的末尾了。还记得去年的这个时候，一个人漫步在新加坡的街头，看着熙熙攘攘的庆祝的人群，独自品尝着孤单。孤单于人是有益，特别是这个喧嚷的时代，能够一个人静下来是多么重要。然而在新加坡，心却是焦躁不安的，直到踏上旅程那刻，才踏实下来。因为它早已知道我想要的是什么。回到国内，完成毕设，告别众人，开始工作，它再也没不安过了，因为我正走在了属于自己的道路上。</p>
 
 <p>Talk is cheap. 再多的话，也不过说给自己听罢了。此文是这个博客第一篇也是最后一篇絮絮叨叨的博文。以后的文章是记录和分享自己对技术的学习与思考。下一篇文章是介绍如何在VPS上搭建自己的博客。</p>

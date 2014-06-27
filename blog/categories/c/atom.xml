@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: c | My Octopress Blog]]></title>
-  <link href="http://yoursite.com/blog/categories/c/atom.xml" rel="self"/>
-  <link href="http://yoursite.com/"/>
-  <updated>2014-06-27T22:02:35+08:00</updated>
-  <id>http://yoursite.com/</id>
+  <link href="http://zionwu.github.io/blog/categories/c/atom.xml" rel="self"/>
+  <link href="http://zionwu.github.io/"/>
+  <updated>2014-06-27T22:18:01+08:00</updated>
+  <id>http://zionwu.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Note for The C programming language]]></title>
-    <link href="http://yoursite.com/blog/2013/08/02/note-for-the-c-programming-language/"/>
+    <link href="http://zionwu.github.io/blog/2013/08/02/note-for-the-c-programming-language/"/>
     <updated>2013-08-02T23:08:00+08:00</updated>
-    <id>http://yoursite.com/blog/2013/08/02/note-for-the-c-programming-language</id>
+    <id>http://zionwu.github.io/blog/2013/08/02/note-for-the-c-programming-language</id>
     <content type="html"><![CDATA[<p>最近读了K&amp;R，也就是传说中的《The C programming language》。作为我第一门学习的语言，对C的喜爱不言而喻。有两年多没接触C，再次回顾，相比其Java和C++等高级语言, 其简洁优美的特性深深吸引了我。以下是阅读过程中在evernote中的一些摘要。</p>
 
 <p>1.You should note that we are using the words definition and declaration carefully when we refer to external variables in this section. Definition refers to the place where the variable is created or assigned storage; declaration refers to places where the nature of the variable is stated but no storage is allocated. <br/>
