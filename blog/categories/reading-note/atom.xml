@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: reading note | My Octopress Blog]]></title>
+  <title><![CDATA[Category: reading note | Zion Blog]]></title>
   <link href="http://zionwu.github.io/blog/categories/reading-note/atom.xml" rel="self"/>
   <link href="http://zionwu.github.io/"/>
-  <updated>2014-06-27T22:18:01+08:00</updated>
+  <updated>2014-06-27T22:36:28+08:00</updated>
   <id>http://zionwu.github.io/</id>
   <author>
-    <name><![CDATA[Your Name]]></name>
+    <name><![CDATA[Zion Wu]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
