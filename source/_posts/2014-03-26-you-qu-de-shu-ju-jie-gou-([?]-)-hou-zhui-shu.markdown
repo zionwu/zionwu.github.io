@@ -79,7 +79,7 @@ TBD
 2. 将多个字符串构建一个后缀树，我们可以找到这些字符串的公共子字符串，以及某个子串出现的频率等数据。这些数据和操作在模式挖掘和模式匹配中发挥着重要作用。  
 
 ###总结
-后缀树的概念虽然不难理解，但是线性时间的Ukkonen’s算法却十分晦涩。这是因为它使用了众多基于后缀数的特性的优化技巧，这些技巧都不大直观，必须十分了解后缀树的特性后，才能理解这些技巧的原理。在我学习的过程中，只看书或者讲解也是半知半解，最后通过调试代码，重现整个构建过程，才最终理解了算法的原理。后缀树的代码在我的github的[suffix-tree repos](https://github.com/zionwu)中有提供。希望这篇文章以及代码能够帮助你深入理解后缀树和Ukkonen’s算法。
+后缀树的概念虽然不难理解，但是线性时间的Ukkonen’s算法却十分晦涩。这是因为它使用了众多基于后缀数的特性的优化技巧，这些技巧都不大直观，必须十分了解后缀树的特性后，才能理解这些技巧的原理。在我学习的过程中，只看书或者讲解也是半知半解，最后通过调试代码，重现整个构建过程，才最终理解了算法的原理。后缀树的代码在我的github的[suffix-tree repos](https://github.com/zionwu/suffix_tree)中有提供。希望这篇文章以及代码能够帮助你深入理解后缀树和Ukkonen’s算法。
 
 ####参考资料
 1. Gusfield, Dan (1999) [1997]. Algorithms on Strings, Trees and Sequences: Computer Science and Computational Biology. USA: Cambridge University Press. ISBN 0-521-58519-8.
