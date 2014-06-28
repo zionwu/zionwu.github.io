@@ -7,7 +7,7 @@
 	<meta name="author" content="Zion Wu">
 
 	
-	<meta name="description" content="跳跃表 什么是跳跃表 跳跃表是一种基于链表的数据结构，它支持对有序序列的快速查找。它在工程领域中有着广泛的应用，如redis和leveldb都是它作为底层数据结构。下图是一个跳跃表的例子： 如图所示，该跳跃表有一个表头以及10个节点。节点之间并非只有一个链接，而是有多个链接。 &hellip;">
+	<meta name="description" content="前言 最近这一个月的业余时间阅读了redis 2.8.9版本的源代码。之所以会阅读源代码，一开始是在去年的时候看到了@huangz在网上发布的书redis设计与实现旧版。huangz是一个和我同龄的人，但却已经通读了redis代码，并且写出了一本那么优秀的书以及翻译了众多文章，让我受到很大震动。 &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -72,6 +72,48 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2014/06/28/redisyuan-ma-yue-du-xin-de-(%5B%3F%5D-)/">
+		
+			Redis源码阅读心得（一）</a>
+	</h2>
+	<div class="entry-content">
+		<h3>前言</h3>
+
+<p>最近这一个月的业余时间阅读了redis 2.8.9版本的源代码。之所以会阅读源代码，一开始是在去年的时候看到了<a href="http://weibo.com/huangz1990">@huangz</a>在网上发布的书<a href="http://origin.redisbook.com/en/latest/">redis设计与实现旧版</a>。huangz是一个和我同龄的人，但却已经通读了redis代码，并且写出了一本那么优秀的书以及翻译了众多<a href="https://redis.readthedocs.org/en/latest/">文章</a>，让我受到很大震动。那时就开始参照他的书阅读redis代码，无奈当时只是将底层数据结构的代码读完后就不了了之了。今年5月，决定重新开始，每晚抽出时间阅读，并且加上中文注释上传到github的<a href="https://github.com/zionwu/redis-2.8.9-annotation">repos</a>，以此来记录并鞭策自己。</p>
+
+<p>阅读redisd代码的过程充满了乐趣。印象最深刻便是我在深夜时发现了一个bug，提出了issue和<a href="https://github.com/antirez/redis/pull/1788">pull request</a>, 之后就兴奋得睡不着觉。 而最终成功merge到redis的<a href="https://github.com/antirez/redis">repos</a>时，十分高兴，这是自己第一次对开源项目的贡献。想到以后redis的新版本，包含了我的小小的贡献，被广泛使用，就很有成就感。难怪那么多人痴迷于开源软件了！</p>
+
+<p>虽然已经有了huangz的书了，但是他书中是对redis的设计和原理进行客观的剖析。而我这个系列的文章，是从我的角度，分析和评价redis代码，论述认为值得学习的设计或者代码技巧，同时也对不合理的地方进行评价。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-06-28T23:51:00+08:00" pubdate data-updated="true">Jun 28<sup>th</sup>, 2014</time></div>
+	<div class="tags">
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
