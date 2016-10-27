@@ -1,0 +1,205 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>荐书-The Little Schemer - Zion Blog</title>
+	<meta name="author" content="Zion Wu">
+
+	
+	<meta name="description" content="上周末看了《The Little Schemer》这本书。第一次接触scheme是看SICP的时候，当时就喜欢上了scheme这样美妙的语言。后来发现了The Little Schemer这本书，网上评价颇高，而且篇幅也不多只有200多页。于是利用周末两天的时间看了下来。 &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="Zion Blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+<body>
+	<header id="header" class="inner"><h1><a href="/">Zion Blog</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+	<li><a href="/about-me">About me</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+	<li><a href="/about-me">About me</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="https://www.google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:zionwu.github.io">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		
+		
+    
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="https://www.google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:zionwu.github.io">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h2 class="title">荐书-the Little Schemer</h2>
+	<div class="entry-content"><p>上周末看了《<a href="http://book.douban.com/subject/1632977/">The Little Schemer</a>》这本书。第一次接触scheme是看<a href="http://mitpress.mit.edu/sicp/full-text/book/book.html">SICP</a>的时候，当时就喜欢上了scheme这样美妙的语言。后来发现了The Little Schemer这本书，网上评价颇高，而且篇幅也不多只有200多页。于是利用周末两天的时间看了下来。</p>
+
+<p>这本书适合没有没有学习过scheme，甚至没有学习过编程的人看，它讲的内容大多是与scheme相关的入门知识。不像java或者C这些命令式编程语言，语法或者需要了解的知识都比较多，容易让初学者生畏。而scheme则是函数式的编程语言（但是并非纯的函数式语言，因为scheme支持对变量的赋值），语法十分简单。</p>
+
+<p>这本书的编排也十分巧妙。开篇(附在本文最后)就是所谓的十诫（The Ten Commandments）和五规(The Five Rules)，这是模仿了<a href="http://baike.baidu.com/view/42143.htm">摩西十诫</a>。初学者可能完全看不懂这些，由此打了退堂鼓。其实这些就是整本书所要讲的核心内容，作者在后面的章节将由浅至深，引导读者通过自己思考逐渐摸索出十诫与五规。如果一开始就放弃的读者，那恐怕是对scheme的诚心不够，在十诫与五规前退缩，因此也无缘得道: )</p>
+
+<p>能够克服一开始的恐惧，翻到正式的章节，就会眼前一亮，没有一段又一段的定义与解释，而是如下所示的一个又一个的问题排在在左边一列，而右边则是答案：</p>
+
+<blockquote><p> Is it true that this is an atom? &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yes, <br/>
+   turkey&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;because turkey is a string of characters beginning with a letter.</p></blockquote>
+
+<p>通过这些问题，读者将逐渐学习到scheme的语法如car, cdr的用法。这种苏格拉底式的教学方法的好处就是能够一点一点的将知识以自然思考的方式教给读者。一般的教科书，一上来就是大段的定义，然后再一大段的解释，让人就就没有读下去的欲望了。好不容易啃完了，但却往往只是大概有个概念，不甚理解。只有当学习到一定程度，回过头来看，才恍然大悟，原来这样定义是因为这样的啊。这是因为即使教材的作者是学术泰斗，对概念的理解已炉火纯青，能够用精炼浅显的语言表达出来，但是却忽略了初学者接触新概念到理解新概念这一过程需要的思考过程。对于作者来说，这些恐怕是再理所当然的了，那是因为他们已经完全消化了这些知识。对于初学者，没有思考消化的过程，是不可能真正理解的。这一点在刘未鹏老师的博文<a href="http://mindhacks.cn/2008/07/07/the-importance-of-knowing-why/">知其所以然</a>已经有很好的阐述了，这里就不再累述。</p>
+
+<p>因此，这种一问一答的模式，是专门为初学者设置的。初学者在问题的引导下，思考的轨迹就是就是逐渐了解并理解scheme的过程，这就是这本书最值得称道的地方。从一开始学习car,cdr等简单内置函数，然后逐渐写最简单的函数，学习到“十诫”中某条的最初版本。再到处理更复杂的问题，并由此完善戒条，逐渐得到最终版本。这就是得道的必经之路。</p>
+
+<p>读者顺着一个又一个问题，欲罢不能，回过神就发现自己已经看了书的一大半，而且也已经被scheme语言的美妙所吸引了，原来编程就是这么简单的一回事啊。没有复杂的语法，没有大堆需要记忆的东西，依靠着简单明了的“十诫”，从简单的函数开始，一步一步构建出高阶的功能更强大的函数。</p>
+
+<p>书中的最后两章对于初学者可能还有点难度。第九章讲的是scheme中define的语义是如何构建的，我们从而能够学到递归在scheme中发挥的本质作用。而第十章讲的是如何构建一个scheme的求值器。但是如果认真多看几遍，肯定能够有所收获，对scheme和递归有更深入的理解。</p>
+
+<p>如果这时候你已经对scheme和编程入迷了，那么就强烈你看《<a href="http://mitpress.mit.edu/sicp/full-text/book/book.html">Structure and Interpretation of Computer Programs</a>》, 也就是SICP, 这是我读过关于编程的书中最好的，没有之一。</p>
+
+<p>附：十诫（The Ten Commandments）和五规(The Five Rules)</p>
+
+<h4>The Ten Commandments</h4>
+
+<blockquote><p><strong>The First Commandment</strong><br/>
+When recurring on a list of atoms, lat, ask two questions about it: (null? lat) and else. When recurring on a number, n, ask two questions about it: (zero? n) and else. When recurring on a list of S-expressions, I, ask three question about it: (null? I), (atom? (car I)), and else.</p>
+
+<p><strong>The Second Commandment</strong><br/>
+Use cons to build lists.</p>
+
+<p><strong>The Third Commandment</strong><br/>
+When building a list, describe the first typical element, and then cons it onto the natural >recursion.</p>
+
+<p><strong>The Foruth Commandment</strong><br/>
+Always change at least one argument while recurring. When recurring on a list of atoms, lat, use (cdr lat). When recurring on a number, n, use (sub1 n). And when recurring on a list of S-expressions, I, use (car I) and (cdr I) if neither (null? I) nor (atom? (car I)) are true. It must be changed to be closer to termination.The changing argument must be tested in the termination condition: &ldquo;when using cdr, test termination with null?&rdquo;  and &ldquo;when using sub1, test termination withzero?&rdquo;</p>
+
+<p><strong>The Fifth Commandment</strong><br/>
+When building a value with + ,always use 0 for the value of the terminating line, for adding 0 does not change the value of an addition. When building a value with x, always use 1 for the value of the terminating line, formultiplying by 1 does not change the value of a multiplication. When building a value with cons, always consider 0 for the value of the terminating line.</p>
+
+<p><strong>The Sixth Commandment</strong> <br/>
+Simplify only after the function is correct.</p>
+
+<p><strong>The Seventh Commandment</strong><br/>
+Recur on the subparts that are of the same nature:1. On the sublists of a list. 2. On the subexpressions of an arithmetic expression.</p>
+
+<p><strong>The Eighth Commandment</strong><br/>
+Use help functions to abstract from representations.</p>
+
+<p><strong>The Ninth Commandment</strong><br/>
+Abstract common patterns with a new function.</p>
+
+<p><strong>The Tenth Commandment</strong>
+Build functions to collect more than one value at a time.</p></blockquote>
+
+<h4>The Five Rules</h4>
+
+<blockquote><p><strong>The Law of Car</strong> <br/>
+The primitive car is defined only for non-empty lists.</p>
+
+<p><strong>The Law of Cdr</strong><br/>
+The primitive cdr is defined only for non-empty lists. The cdr of any non-empty list is always another list.</p>
+
+<p><strong>The Law of Cons</strong><br/>
+The primitive cons takes two arguments. The second argument to cons must be a list. The result is a list.</p>
+
+<p><strong>The Law of Null?</strong><br/>
+The primitive null? is defined only for lists.</p>
+
+<p><strong>The Law of Eq?</strong><br/>
+The primitive eq&#8217;l takes two arguments. Each must be a non-numeric atom.</p></blockquote>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-07T23:45:00+08:00" pubdate data-updated="true">Apr 7<sup>th</sup>, 2014</time></div>
+	<div class="tags">
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2014
+
+    Zion Wu
+
+</footer>
+	<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+
+
+
+
+</body>
+</html>

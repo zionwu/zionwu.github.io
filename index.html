@@ -1,0 +1,1551 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Zion Blog</title>
+	<meta name="author" content="Zion Wu">
+
+	
+	<meta name="description" content="前言 最近这一个月的业余时间阅读了redis 2.8.9版本的源代码。之所以会阅读源代码，一开始是在去年的时候看到了@huangz在网上发布的书redis设计与实现旧版。huangz是一个和我同龄的人，但却已经通读了redis代码，并且写出了一本那么优秀的书以及翻译了众多文章，让我受到很大震动。 &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="Zion Blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+<body>
+	<header id="header" class="inner"><h1><a href="/">Zion Blog</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+	<li><a href="/about-me">About me</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+	<li><a href="/about-me">About me</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="https://www.google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:zionwu.github.io">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		
+		
+    
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="https://www.google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:zionwu.github.io">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2014/06/28/redisyuan-ma-yue-du-xin-de-(%5B%3F%5D-)/">
+		
+			Redis源码阅读心得（一）</a>
+	</h2>
+	<div class="entry-content">
+		<h3>前言</h3>
+
+<p>最近这一个月的业余时间阅读了redis 2.8.9版本的源代码。之所以会阅读源代码，一开始是在去年的时候看到了<a href="http://weibo.com/huangz1990">@huangz</a>在网上发布的书<a href="http://origin.redisbook.com/en/latest/">redis设计与实现旧版</a>。huangz是一个和我同龄的人，但却已经通读了redis代码，并且写出了一本那么优秀的书以及翻译了众多<a href="https://redis.readthedocs.org/en/latest/">文章</a>，让我受到很大震动。那时就开始参照他的书阅读redis代码，无奈当时只是将底层数据结构的代码读完后就不了了之了。今年5月，决定重新开始，每晚抽出时间阅读，并且加上中文注释上传到github的<a href="https://github.com/zionwu/redis-2.8.9-annotation">repos</a>，以此来记录并鞭策自己。</p>
+
+<p>阅读redisd代码的过程充满了乐趣。印象最深刻便是我在深夜时发现了一个bug，提出了issue和<a href="https://github.com/antirez/redis/pull/1788">pull request</a>, 之后就兴奋得睡不着觉。 而最终成功merge到redis的<a href="https://github.com/antirez/redis">repos</a>时，十分高兴，这是自己第一次对开源项目的贡献。想到以后redis的新版本，包含了我的小小的贡献，被广泛使用，就很有成就感。难怪那么多人痴迷于开源软件了！</p>
+
+<p>虽然已经有了huangz的书了，但是他书中是对redis的设计和原理进行客观的剖析。而我这个系列的文章，是从我的角度，分析和评价redis代码，论述认为值得学习的设计或者代码技巧，同时也对不合理的地方进行评价。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-06-28T23:51:00+08:00" pubdate data-updated="true">Jun 28<sup>th</sup>, 2014</time></div>
+	<div class="tags">
+
+</div>
+	
+</div></article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2014/06/21/suan-fa-shu-shang-mei-you-de-shu-ju-jie-gou-(er-)-tiao-yue-biao/">
+		
+			算法书上没有的数据结构（二）-跳跃表</a>
+	</h2>
+	<div class="entry-content">
+		<h2>跳跃表</h2>
+
+<h3>什么是跳跃表</h3>
+
+<p>跳跃表是一种基于链表的数据结构，它支持对有序序列的快速查找。它在工程领域中有着广泛的应用，如<a href="en.wikipedia.org/wiki/Redis">redis</a>和<a href="en.wikipedia.org/wiki/LevelDB">leveldb</a>都是它作为底层数据结构。下图是一个跳跃表的例子：  <br/>
+<img class="center" src="./../images/skiplist/skiplist.png"></p>
+
+<p>如图所示，该跳跃表有一个表头以及10个节点。节点之间并非只有一个链接，而是有多个链接。上层链接间的节点距离较远，而底层链接间的节点距离较近。最下面一层的链接距离为1，就是普通的链表。每次查找节点的时候，都是从最上层的节点开始查找，这样就<strong>跳跃</strong>了中间的节点了。下面一节将详细讲解跳跃表的实现。</p>
+
+<h3>跳跃表的操作</h3>
+
+<p>跳跃表的实现并不复杂。与普通的链表节点不同，跳跃表的节点中包含了多个对后续节点的链接，我们只要弄清楚如何处理这些链接，就能够知道如何构建和操作跳跃表了。对一个跳跃表插入新元素的算法描述如下：</p>
+
+<blockquote><p>往跳跃表sl插入新的元素v。将节点n设置为表头节点，将层次l设置为最高层m，初始化一个大小为m的数组hist，做以下操作：</p>
+
+<ol>
+<li>如果这一层的链接为空，那么l指向同一节点的下一层。</li>
+<li>如果这一层的链接p非空，并且p指向的节点pn的值小于v，那么将节点n设置为pn。</li>
+<li>如果这一层的链接p非空，并且p指向的节点pn的值大于v，那么将hist[l]设置为当前节点n, l指向同一节点的下一层。</li>
+<li>如果这一层的链接p非空，并且p指向的节点pn的值等于v，那么该值已经存在于跳跃表中了。</li>
+</ol>
+
+
+<p>当l为1(最低层)，并且当前节点n的链接指向节点的值大于v时，我们结束查找。将v插入到节点n后面，对于数组hist的节点hist[i]，调整该节点在第i层的链接。</p></blockquote>
+
+<p>下面的图片是一个具体的例子：  <br/>
+<img class="center" src="./../images/skiplist/skiplist-add.gif"></p>
+
+<p>如题所示，往表里插入80，从表头的最高层开始。这一层的链接p为空， 因此层次l指向下一层，即第三层。第三层的链接p非空，而链接指向的节点值为50，比80小，因此当前节点前进至p所指节点。该节点在第三层的链接为空，所以层次l指向下一层，即第二层。第二层链接p非空，指向节点的值为70, 比80小，当前节点前进至下一节点。该节点第二层的链接为空，则层次l指向下一层，即第一层。在第一层，下一个节点的值为90, 比80大，因此结束查找，在70与90的节点中插入值为80的新节点。对于新节点，其有效的层次可以随机指定，即rand()%4，假设随机值是2, 那么我们需要调整第一层和第二层最后经过节点的链接。这就是为什么我们需要使用数组hist保存每一层最后经过的节点。</p>
+
+<h3>跳跃表的实现</h3>
+
+<p>我们以redis的skiplist的源码为例子，讲解skiplist的实现。 redis中skiplist的数据结构的定义如下：</p>
+
+<pre><code>typedef struct zskiplist {
+    //保存了表头和表尾
+    struct zskiplistNode *header, *tail;    
+    //元素的数量
+    unsigned long length;    
+    //最高层的值
+    int level;     
+} zskiplist;     
+
+typedef struct zskiplistNode {
+    //redis对象，保存具体的值
+    robj *obj;
+    //用来表示节点的大小
+    double score;
+    //指向前一个节点
+    struct zskiplistNode *backward;
+    //多层的链接
+    struct zskiplistLevel {
+        //下一个节点
+        struct zskiplistNode *forward;
+        //本节点与下一个节点的距离
+        unsigned int span;
+    } level[];
+} zskiplistNode;
+</code></pre>
+
+<p>zskiplist结构保存了指向表头表尾。注意表头是一个特殊节点，并不保存数据，而表尾则保存着实际的值。zskiplistNode结构表示一个节点，redis使用score字段来表示节点的大小，如果该字段相等，则在比较redis对象robj的大小。节点中有一个数组level, 该数组表示了多层的链接，每层链接除了指向下一个节点的指针，还有与下一节点的距离。</p>
+
+<p>接下来我们看看redis中如何往skiplist插入一个新的节点：</p>
+
+<pre><code>//往skiplist中插入一个新节点
+zskiplistNode *zslInsert(zskiplist *zsl, double score, robj *obj) {
+    zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;
+    unsigned int rank[ZSKIPLIST_MAXLEVEL];
+    int i, level;
+
+    redisAssert(!isnan(score));
+    x = zsl-&gt;header;
+
+    //先从高层找起，即level的zsl-&gt;level-1到0
+    for (i = zsl-&gt;level-1; i &gt;= 0; i--) {
+        /* store rank that is crossed to reach the insert position */
+        //将上一层跳过的元素数量加到这一层的rank中
+        rank[i] = i == (zsl-&gt;level-1) ? 0 : rank[i+1];
+        //如果这一层forward指针不为空，而且指向的元素比插入元素小，继续在该层上前进
+        while (x-&gt;level[i].forward &amp;&amp;
+            (x-&gt;level[i].forward-&gt;score &lt; score ||
+                (x-&gt;level[i].forward-&gt;score == score &amp;&amp;
+                compareStringObjects(x-&gt;level[i].forward-&gt;obj,obj) &lt; 0))) {
+            //将跳过元素数量加到rank中
+            rank[i] += x-&gt;level[i].span;
+            //指向下一个节点
+            x = x-&gt;level[i].forward;
+        }
+        //记录这一层上最后一个小于插入值的节点
+        update[i] = x;
+    }
+    /* we assume the key is not already inside, since we allow duplicated
+    * scores, and the re-insertion of score and redis object should never
+    *  happen since the caller of zslInsert() should test in the hash table
+    * if the element is already inside or not. */
+    level = zslRandomLevel();
+    //如果随机得到的level比当前skip的level要大
+    if (level &gt; zsl-&gt;level) {
+        for (i = zsl-&gt;level; i &lt; level; i++) {
+            rank[i] = 0;
+            //更新从zsl-&gt;level到level的update值
+            update[i] = zsl-&gt;header;
+            //更新update指向节点的level[i].span的值
+            update[i]-&gt;level[i].span = zsl-&gt;length;
+        }
+        zsl-&gt;level = level;
+    }
+    x = zslCreateNode(level,score,obj);
+    for (i = 0; i &lt; level; i++) {
+        //将新节点第i层的forward指向update[i]节点第i层的forward
+        x-&gt;level[i].forward = update[i]-&gt;level[i].forward;
+        //将update[i]节点第i层的forward指向新的节点
+        update[i]-&gt;level[i].forward = x;
+
+        /* update span covered by update[i] as x is inserted here */
+        //计算新的节点的span值。rank[0] - rank[i]为新元素到update[i]的距离。
+        //update[i]-&gt;level[i].span为该节点到原下一节点的距离。
+        //相减则为新节点到下一节点的距离
+        x-&gt;level[i].span = update[i]-&gt;level[i].span - (rank[0] - rank[i]);
+        //更新update[i]-&gt;level[i].span 
+        update[i]-&gt;level[i].span = (rank[0] - rank[i]) + 1;
+    }
+
+    /* increment span for untouched levels */
+    //对于level到zsl-&gt;level的节点，它们的forward指针并没有改变，只需要对span值加1
+    for (i = level; i &lt; zsl-&gt;level; i++) {
+        update[i]-&gt;level[i].span++;
+    }
+
+    //更新backward指针
+    x-&gt;backward = (update[0] == zsl-&gt;header) ? NULL : update[0];
+    if (x-&gt;level[0].forward)
+        x-&gt;level[0].forward-&gt;backward = x;
+    else
+        zsl-&gt;tail = x;
+    zsl-&gt;length++;
+    return x;
+}    
+</code></pre>
+
+<p>该函数按照上一节算法描述，从表头最高层开始，找到新节点要插入的位置，同时记录每一层次上最后经过的节点。然后初始化一个新的节点，随机得到该节点的有效链接层数，然后将节点插入并更新各层的链接。</p>
+
+<p>对redis源代码感兴趣的读者，可以参考我对redis 2.8.9代码添加注释的<a href="https://github.com/zionwu/redis-2.8.9-annotation">repos</a>。</p>
+
+<h3>总结</h3>
+
+<p>跳跃表并不是一个复制的数据结构，但是它的各种操作都十分高效。其插入，查询和删除操作的平均时间复杂度都是O(logN)。因此如果在应用中需要一个有序集合，不妨考虑使用跳跃表。</p>
+
+<h4>参考资料</h4>
+
+<ol>
+<li><a href="http://en.wikipedia.org/wiki/Skip_list">http://en.wikipedia.org/wiki/Skip_list</a></li>
+<li>Pugh, W. (1990). &ldquo;Skip lists: A probabilistic alternative to balanced trees&rdquo;. Communications of the ACM 33 (6): 668. doi:10.1145/78973.78977</li>
+<li><a href="https://github.com/antirez/redis">redis源代码</a></li>
+</ol>
+
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-06-21T05:00:00+08:00" pubdate data-updated="true">Jun 21<sup>st</sup>, 2014</time></div>
+	<div class="tags">
+
+</div>
+	
+</div></article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2014/04/26/you-qu-de-shu-ju-jie-gou-(%5B%3F%5D-)-hou-zhui-shu/">
+		
+			算法书上没有的数据结构（一）-后缀树</a>
+	</h2>
+	<div class="entry-content">
+		<h2>前言</h2>
+
+<p>这个系列的文章将介绍一些在一般算法书上很少提到，但是在实际应用中却发挥着重要作用的数据结构。希望读者通过学习这些数据结构的原理与应用，为日后工作学习中的编程添加了更多选择。</p>
+
+<br />
+
+
+<h2>后缀树</h2>
+
+<h3>什么是后缀树</h3>
+
+<p>顾名思义，后缀树是基于树的一种数据结构，它表示了给定字符串的所有后缀，对字符串的许多重要操作能够提供快速的实现。后缀数在数据挖掘中被广泛的使用。它也是我本科毕业设计中的序列模式挖掘算法的核心数据结构。后缀树的定义如下：</p>
+
+<blockquote><ol>
+<li><strong>对于一个m个字符长的字符串S, S对应的后缀树T有着m个叶子节点.</strong></li>
+<li><strong>每个内节点（除了叶子节点和根节点以外的节点），都有至少有两个子节点，以及每条边都被S的非空子字符串所标记。</strong></li>
+<li><strong>从根节点到叶子节点，将所有边的标记子字符串连接起来，必定是字符串S的一个后缀</strong>。</li>
+</ol>
+</blockquote>
+
+<p>上面的定义过于抽象，让我们看一个实际的例子。对于字符串<strong>“BANANA”</strong>, 它的后缀树是：</p>
+
+<p><img class="center" src="./../images/suffix-tree/suffixtree.png" width="350"></p>
+
+<p>我们通过上图来解释之前提到的后缀数的三个性质: <br/>
+*  性质1：对于<strong>“BANANA”</strong>，该字符串的后缀有六个，而图中的树也有六个叶子节点。<br/>
+*  性质2：对于图中的内节点（即圆形节点），都至少有两个子节点。而每条边上被子字符串所标记。   <br/>
+*  性质3：可以看到，从根节点到叶子节点1, 依次将边上标记的字符串连接起来，组成的是<strong>“ANANA”</strong>，是<strong>&ldquo;BANANA&rdquo;</strong>的一个后缀。实际上，从根节点到每个叶子节点的边的标记字符串的连接，都是<strong>&ldquo;BANANA&rdquo;</strong>的后缀。</p>
+
+<p>细心的读者可能会发现，图中的字符串末尾有<strong>“$&ldquo;</strong>符号。比如从根节点到叶子节点0的边上，标记的字符串是<strong>&#8220;BANANA$&rdquo;</strong>，这个<strong>&ldquo;$&rdquo;</strong>有何用途呢？能否将它去掉呢？ <strong>“$”</strong>是为了解决一个问题而引入的方案。如果字符串S的后缀中，有后缀s1是后缀s2的前缀的话，那么在后缀树中，s1将不会以叶子节点结束。用<strong>&ldquo;BANANA&rdquo;</strong>的例子,  后缀<strong>“A”</strong>是后缀<strong>“ANANA”</strong>的前缀，没有<strong>&ldquo;$&rdquo;</strong>的话，那就没有叶子节点5, 那么<strong>&ldquo;A&rdquo;</strong>就只是一个内节点了，这违反了性质1，2。<strong>“$”</strong>是字符串的符号集以外的符号，将它添加到末尾后，就不会有后缀成为其他后缀的前缀了，那么性质1,2也就成立 了。理解这一点十分重要，希望读者想清楚这个问题。</p>
+
+<h3>如何构建后缀树</h3>
+
+<h4>简单的算法</h4>
+
+<p>首先我们介绍一个简单的构建算法。对于一个长度为m的字符串S，定义S[i..j]是S从位置i到j的的子字符串。比如对于“BANANA”，S[4..6]是字串&#8221;ANA&#8221;。那么构建长度为m的字符串的后缀树的简单算法如下：</p>
+
+<blockquote><ol>
+<li>将一条边S[1..m]作为后缀树T的初始形状。</li>
+<li>对于i = 2&hellip;m, 依次将S[i..m]插入到T中。</li>
+</ol>
+</blockquote>
+
+<p>下图是以上述算法构建“BANANA”的后缀树的过程：  <br/>
+ <img class="center" src="./../images/suffix-tree/simple-alo.png"></p>
+
+<p>上图从左到右依次将后缀“BANANA”, &ldquo;ANANA&rdquo; &hellip;“A” 插入到后缀树中。对于长度为m的字符串，这个算法的时间复杂度是O(m<sup>2</sup> )。在数据挖掘的应用中，对于大规模的数据集，这个算法的效率是不能满足需求的。</p>
+
+<h4>Ukkonen’s算法</h4>
+
+<p><a href="http://en.wikipedia.org/wiki/Ukkonen's_algorithm">Ukkonen’s算法</a>是一个线性算法，该算法是E. Ukkonen在论文 《On-line construction of suffix trees》中提出的。我们先忽略一些细节，从高层次来描述该算法，让读者对算法的思想有大致的掌握。 <br/>
+首先，我们有以下的定义：</p>
+
+<blockquote><p>Ti 是字符串S的子串S[1..i]的后缀树。</p></blockquote>
+
+<p>Ukkonen’s算法分成m个步骤（m是字符串S长度），在步骤i+1中，我们将在后缀树<strong>Ti</strong>的基础上，构建后缀树<strong>Ti+1</strong>。而对于步骤i+1, 有i+1个操作。在第j个操作中，首先找到S[j..i]的叶子节点，然后将字符S[i+1]添加到叶子节点上。以“BANANA”为例子，一共有6个步骤。在第4步中，基于“BAN”的后缀树T3已经存在了，我们要在以T3为基础构建T4，即“BANA”的后缀树。在这一步中，将有4个操作，就是将字符“A”添加到T3的各个叶子节点中。要注意的是，这样描述的算法的时间复杂度是O( m<sup>3</sup> )，比之前介绍的算法更慢！ 这是因为我们忽略了一些重要的优化手段。从高层次理解了算法的思路后，接着将介绍算法中如何使用优化手段将时间复杂度降为O(m)。</p>
+
+<h4>1. 后缀链接</h4>
+
+<p>后缀链接的定义如下：</p>
+
+<blockquote><p>xs表示任意字符串，其中x表示单个字符，而s表示字符串。对于后缀树中的节点v, 对应边上的标识字符串是xs。如果存在另外一个节点s(v), 其对应边上的标识字符串是s，那么从v到s(v)的链接就是后缀链接。</p></blockquote>
+
+<p>在第一幅图中，虚线表示的就是后缀链接。对于图中后缀树深度为1的两个内节点，右边的节点的对应边的标识字符串是&#8221;NA&#8221;，而左边节点的对应边的标识字符串是“A”, 因此从右边节点有一虚线指向左边节点。</p>
+
+<p>了解了后缀链接的概念后，我们接下来看算法如何使用它来优化。在第i+1步骤的第j个操作中，我们已经将字符S[i+1]添加到S[j..i]的叶子节点。那么在第j+1个操作中，我们想要将S[i+1]添加到S[j+1..i]的叶子节点时，我们遵循以下规定： <br/>
+1.完成第j个操作后，我们从S[j..i+1]的叶子节点往上前进，要么前进一步到了根节点，要么前进直到找到一个拥有后缀链接的节点v， 其中路径上的标识字符串是s。 <br/>
+2.如果找到v，那么沿着后缀链接走到s(v)。   <br/>
+3.从s(v)往下走，根据s选择路径，找到S[j+1..i]的叶子节点。</p>
+
+<p>通过后缀链接，我们避免了每次操作都从根节点开始寻找需要改变的叶节点。以“BANANA“为例子，在第4步以T3(&ldquo;BAN&rdquo;)为基础构建T4(&ldquo;BANA&rdquo;), 完成了第一个操作，将“A&#8221;添加到“BAN”对应的叶节点。下一个操作，我们需要将“A&#8221;添加到”AN“, 注意根据定义从“BAN”的叶节点会有后缀链接到”AN“的叶节点，那么我们直接根据后缀链接就可以快速找到”AN“的叶节点了。当然这个例子比较简单，更加通用的例子可以根据下图来帮助理解：  <br/>
+<img class="center" src="./../images/suffix-tree/suffix-link.png" width="320"></p>
+
+<h4>2. 跳跃比较</h4>
+
+<p>第二个加速的技巧叫做跳跃比较。当从节点s(v)往下走时，我们不需要路径上标识字符串的每一个字符，只需要比较第一个字符串就可以了。这是因为根据后缀链接和后缀树的定义，如果v到从S[j..i+1]的叶子节点的路径标识字符串是a，那么从s(v)到S[j+1..i]的叶子节点的路径标识字符串叶也必定是a, 那么我们就可以放心只比较第一个字符就可以了，不必比较每一个字符，如下图所示：  <br/>
+<img class="center" src="./../images/suffix-tree/skip-count.png" width="320"></p>
+
+<h4>3. 更多技巧</h4>
+
+<p>还有两个重要的加速的技巧是： <br/>
+1.如果在第i+1个步骤，在第j个操作要将S(i+i)添加到S[j..i]时，发现S[j..i+1]已经存在了，那么我们可以结束这个步骤。因为S[k..i+1] (j&lt; k &lt; i)也必定已经存在于树中，没有必要做后面的的操作了。 <br/>
+2.一个叶子节点，在构建的过程中将一直叶子节点，只不过它对应的路径的标识字符串不断增长。那么在第i+1个步骤中，如果我们第一次创建一个叶子节点，它的路径标识字符串应该是S[j..i+1], 我们可以用S[j..m]来标识它。因为在后面的操作中，S[j..i+1]将逐渐被拓展成S[j..m]。那么我们不如一次就完成。</p>
+
+<p>使用了上面的技巧后，构建后缀树的时间复杂度减少到O(m)。 虽然感觉不可思议，但是确实是如此。而上面提到的技巧都不大直观，不利于理解。下面我将以”BANANA“为例，讲解使用上面技巧构建后缀树的过程，希望能够帮助到理解。</p>
+
+<h4>4. 实例讲解</h4>
+
+<p>TBD</p>
+
+<h3>后缀树的应用</h3>
+
+<p>后缀树在数据挖掘的应用中有着广泛的用途。它对字符串的各种操作提供了性能优秀的实现。下面简单介绍一下它的各种应用。   <br/>
+1. 将两个字符串构建同一个后缀树。使用后缀树，我们可以迅速找到两个字符串间的公共子字符串。只要遍历后缀树，找到两个字符串共享的叶子节点即可。  <br/>
+2. 将多个字符串构建一个后缀树，我们可以找到这些字符串的公共子字符串，以及某个子串出现的频率等数据。这些数据和操作在模式挖掘和模式匹配中发挥着重要作用。</p>
+
+<h3>总结</h3>
+
+<p>后缀树的概念虽然不难理解，但是线性时间的Ukkonen’s算法却十分晦涩。这是因为它使用了众多基于后缀数的特性的优化技巧，这些技巧都不大直观，必须十分了解后缀树的特性后，才能理解这些技巧的原理。在我学习的过程中，只看书或者讲解也是半知半解，最后通过调试代码，重现整个构建过程，才最终理解了算法的原理。后缀树的代码在我的github的<a href="https://github.com/zionwu/suffix_tree">suffix-tree repos</a>中有提供。希望这篇文章以及代码能够帮助你深入理解后缀树和Ukkonen’s算法。</p>
+
+<h4>参考资料</h4>
+
+<ol>
+<li>Gusfield, Dan (1999) [1997]. Algorithms on Strings, Trees and Sequences: Computer Science and Computational Biology. USA: Cambridge University Press. ISBN 0-521-58519-8.</li>
+<li><a href="http://en.wikipedia.org/wiki/Suffix_tree">http://en.wikipedia.org/wiki/Suffix_tree</a></li>
+</ol>
+
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-26T01:47:00+08:00" pubdate data-updated="true">Apr 26<sup>th</sup>, 2014</time></div>
+	<div class="tags">
+
+</div>
+	
+</div></article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2014/04/07/jian-shu-the-little-schemer/">
+		
+			荐书-the Little Schemer</a>
+	</h2>
+	<div class="entry-content">
+		<p>上周末看了《<a href="http://book.douban.com/subject/1632977/">The Little Schemer</a>》这本书。第一次接触scheme是看<a href="http://mitpress.mit.edu/sicp/full-text/book/book.html">SICP</a>的时候，当时就喜欢上了scheme这样美妙的语言。后来发现了The Little Schemer这本书，网上评价颇高，而且篇幅也不多只有200多页。于是利用周末两天的时间看了下来。</p>
+
+<p>这本书适合没有没有学习过scheme，甚至没有学习过编程的人看，它讲的内容大多是与scheme相关的入门知识。不像java或者C这些命令式编程语言，语法或者需要了解的知识都比较多，容易让初学者生畏。而scheme则是函数式的编程语言（但是并非纯的函数式语言，因为scheme支持对变量的赋值），语法十分简单。</p>
+
+<p>这本书的编排也十分巧妙。开篇(附在本文最后)就是所谓的十诫（The Ten Commandments）和五规(The Five Rules)，这是模仿了<a href="http://baike.baidu.com/view/42143.htm">摩西十诫</a>。初学者可能完全看不懂这些，由此打了退堂鼓。其实这些就是整本书所要讲的核心内容，作者在后面的章节将由浅至深，引导读者通过自己思考逐渐摸索出十诫与五规。如果一开始就放弃的读者，那恐怕是对scheme的诚心不够，在十诫与五规前退缩，因此也无缘得道: )</p>
+
+<p>能够克服一开始的恐惧，翻到正式的章节，就会眼前一亮，没有一段又一段的定义与解释，而是如下所示的一个又一个的问题排在在左边一列，而右边则是答案：</p>
+
+<blockquote><p> Is it true that this is an atom? &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yes, <br/>
+   turkey&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;because turkey is a string of characters beginning with a letter.</p></blockquote>
+
+<p>通过这些问题，读者将逐渐学习到scheme的语法如car, cdr的用法。这种苏格拉底式的教学方法的好处就是能够一点一点的将知识以自然思考的方式教给读者。一般的教科书，一上来就是大段的定义，然后再一大段的解释，让人就就没有读下去的欲望了。好不容易啃完了，但却往往只是大概有个概念，不甚理解。只有当学习到一定程度，回过头来看，才恍然大悟，原来这样定义是因为这样的啊。这是因为即使教材的作者是学术泰斗，对概念的理解已炉火纯青，能够用精炼浅显的语言表达出来，但是却忽略了初学者接触新概念到理解新概念这一过程需要的思考过程。对于作者来说，这些恐怕是再理所当然的了，那是因为他们已经完全消化了这些知识。对于初学者，没有思考消化的过程，是不可能真正理解的。这一点在刘未鹏老师的博文<a href="http://mindhacks.cn/2008/07/07/the-importance-of-knowing-why/">知其所以然</a>已经有很好的阐述了，这里就不再累述。</p>
+
+<p>因此，这种一问一答的模式，是专门为初学者设置的。初学者在问题的引导下，思考的轨迹就是就是逐渐了解并理解scheme的过程，这就是这本书最值得称道的地方。从一开始学习car,cdr等简单内置函数，然后逐渐写最简单的函数，学习到“十诫”中某条的最初版本。再到处理更复杂的问题，并由此完善戒条，逐渐得到最终版本。这就是得道的必经之路。</p>
+
+<p>读者顺着一个又一个问题，欲罢不能，回过神就发现自己已经看了书的一大半，而且也已经被scheme语言的美妙所吸引了，原来编程就是这么简单的一回事啊。没有复杂的语法，没有大堆需要记忆的东西，依靠着简单明了的“十诫”，从简单的函数开始，一步一步构建出高阶的功能更强大的函数。</p>
+
+<p>书中的最后两章对于初学者可能还有点难度。第九章讲的是scheme中define的语义是如何构建的，我们从而能够学到递归在scheme中发挥的本质作用。而第十章讲的是如何构建一个scheme的求值器。但是如果认真多看几遍，肯定能够有所收获，对scheme和递归有更深入的理解。</p>
+
+<p>如果这时候你已经对scheme和编程入迷了，那么就强烈你看《<a href="http://mitpress.mit.edu/sicp/full-text/book/book.html">Structure and Interpretation of Computer Programs</a>》, 也就是SICP, 这是我读过关于编程的书中最好的，没有之一。</p>
+
+<p>附：十诫（The Ten Commandments）和五规(The Five Rules)</p>
+
+<h4>The Ten Commandments</h4>
+
+<blockquote><p><strong>The First Commandment</strong><br/>
+When recurring on a list of atoms, lat, ask two questions about it: (null? lat) and else. When recurring on a number, n, ask two questions about it: (zero? n) and else. When recurring on a list of S-expressions, I, ask three question about it: (null? I), (atom? (car I)), and else.</p>
+
+<p><strong>The Second Commandment</strong><br/>
+Use cons to build lists.</p>
+
+<p><strong>The Third Commandment</strong><br/>
+When building a list, describe the first typical element, and then cons it onto the natural >recursion.</p>
+
+<p><strong>The Foruth Commandment</strong><br/>
+Always change at least one argument while recurring. When recurring on a list of atoms, lat, use (cdr lat). When recurring on a number, n, use (sub1 n). And when recurring on a list of S-expressions, I, use (car I) and (cdr I) if neither (null? I) nor (atom? (car I)) are true. It must be changed to be closer to termination.The changing argument must be tested in the termination condition: &ldquo;when using cdr, test termination with null?&rdquo;  and &ldquo;when using sub1, test termination withzero?&rdquo;</p>
+
+<p><strong>The Fifth Commandment</strong><br/>
+When building a value with + ,always use 0 for the value of the terminating line, for adding 0 does not change the value of an addition. When building a value with x, always use 1 for the value of the terminating line, formultiplying by 1 does not change the value of a multiplication. When building a value with cons, always consider 0 for the value of the terminating line.</p>
+
+<p><strong>The Sixth Commandment</strong> <br/>
+Simplify only after the function is correct.</p>
+
+<p><strong>The Seventh Commandment</strong><br/>
+Recur on the subparts that are of the same nature:1. On the sublists of a list. 2. On the subexpressions of an arithmetic expression.</p>
+
+<p><strong>The Eighth Commandment</strong><br/>
+Use help functions to abstract from representations.</p>
+
+<p><strong>The Ninth Commandment</strong><br/>
+Abstract common patterns with a new function.</p>
+
+<p><strong>The Tenth Commandment</strong>
+Build functions to collect more than one value at a time.</p></blockquote>
+
+<h4>The Five Rules</h4>
+
+<blockquote><p><strong>The Law of Car</strong> <br/>
+The primitive car is defined only for non-empty lists.</p>
+
+<p><strong>The Law of Cdr</strong><br/>
+The primitive cdr is defined only for non-empty lists. The cdr of any non-empty list is always another list.</p>
+
+<p><strong>The Law of Cons</strong><br/>
+The primitive cons takes two arguments. The second argument to cons must be a list. The result is a list.</p>
+
+<p><strong>The Law of Null?</strong><br/>
+The primitive null? is defined only for lists.</p>
+
+<p><strong>The Law of Eq?</strong><br/>
+The primitive eq&#8217;l takes two arguments. Each must be a non-numeric atom.</p></blockquote>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-07T23:45:00+08:00" pubdate data-updated="true">Apr 7<sup>th</sup>, 2014</time></div>
+	<div class="tags">
+
+</div>
+	
+</div></article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2014/03/25/zhong-gou/">
+		
+			浅谈重构&#8211;《重构》读书笔记</a>
+	</h2>
+	<div class="entry-content">
+		<p>以前听到重构这个词的时候，第一印象对软件的代码做大规模的调整，仿佛当今遍地都在进行的事情&mdash;拆迁重建，推倒重来。因此也一直觉得重构是一项很高级的活动，自己可能还远没有这种重构的能力。而在工作中，随着自己对代码理解程度更好，而且全局把握也更好的情况下，我觉得很多一开始觉得不错的地方，现在看起来都还能有所改进。所以从数个月前，就觉得项目的代码需要重构了，但是基于对重构的浅薄的第一印象，又觉得抽不出时间来进行这么大的工程。直到看了《<a href="http://book.douban.com/subject/4262627/">重构</a>》这边书，我对“重构&#8221;的认识才有了翻天覆地的改变。</p>
+
+<h2>一. What-什么是重构</h2>
+
+<p>书中对重构的定义如下：</p>
+
+<blockquote><p>重构（名词）：对软件内部结构的一种调整，目的是在不改变软件可观察行为的前提下，<strong>提高其可理解性，降低其修改成本</strong>。<br/>
+重构（动词）：使用一系列重构手法，在不改变软件可观察行为的前提下，调整其结构。</p></blockquote>
+
+<p>这两个定义看起来还是高上大，让人不明觉厉。其实作者一开始是给了一个重构的例子，在该例子中，作者通过逐步的对代码的调整，最终达到了重构的目的。对比上面的定义，我更喜欢一下的定义。</p>
+
+<blockquote><p>重构技术就是以<strong>微小</strong>的步伐修改程序，如果你犯下错误，很容易便可以发现它。</p></blockquote>
+
+<p>这个定义强调了重构是基于微小的步伐进行的。也就是说，重构并非是作为一种项目的形式存在，而是作为一种编程的习惯。在日常的编程中，我们都可以进行重构，让代码的质量不断提高。哪怕每次都是微小的改动，滴水穿石，项目的代码质量得到提升。以上是我从书中收获到最重要的知识，也就是对重构有了新的观念。另一方面，重构之所以需要以微小步伐进行，是因为我们必须保证软件可观察行为不变，也就是说功能不能回归。要做到这样，我们首先需要有一套可靠的测试机制，比如单元测试与回归测试。每次修改都以小步伐进行，改一点，测一点，这样才能保证不会带来回归。其次我们往往是在添加新代码的时候同时调整旧代码，那么我们必须遵循两者不能同时进行的原则。书中用Kent Beck的两顶帽子来比喻：</p>
+
+<blockquote><p>使用重构技术开发软件时，你把自己的时间分配给两种截然不同的行为：添加新功能以及重构。添加新功能时，你不应该修改已有代码，只管添加新功能。重构时你不能再添加功能，只管改进程序结构。 &hellip;&hellip;.软件开发过程中，你可能发现自己经常变换帽子。首先你会尝试添加新功能，然后意识到，如果把程序结构改一下，功能的添加会容易的多，如果你换一顶帽子，做一会重构工作。结构调整好后，你又换上原先的帽子，继续添加新功能。</p></blockquote>
+
+<p>所谓两顶帽子，也就是指重构和添加新功能，每次你都只能戴一顶。</p>
+
+<h2>二. Why -为什么要重构</h2>
+
+<p>上面的定义提到，重构是提高软件的可理解性与降低修改成本，这么说过于简单了。和学校里只用写一次用来交作业的程序不用，软件是在不断成长，代码在开发过程中不断被修改。原先的一些设计，随着需求的增加或者功能的改进，已经不再适用了，在原有代码上添加新功能过于困难，那么就有必要对原有的代码进行重构。另一方面，我们需要改动的代码，往往是别人写的，或者是自己很早前写的，通过重构，我们可以更深入的理解现有代码，甚至找出代码中潜在的bug。总的来说，重构是为了提高代码质量，降低代码的复杂度。</p>
+
+<h2>三. Where &ndash; 哪里需要进行重构</h2>
+
+<p>要进行重构，首先我们要知道哪些地方是要进行重构的。书里的第三章给出了一个详细的列表。 我挑选了一些并做了简单的解释：</p>
+
+<h4>3.1 Duplicate Code (重复代码)</h4>
+
+<p>编程的一项重要原则是DRY，即do not repeat yourself。如果有重复的代码，那么就必须将其合而为一。</p>
+
+<h4>3.2 ong Method (过长函数)</h4>
+
+<p>一个函数只应该做一件事。太长的函数一方面说明了函数做的事情可能太多了，还有就是可读性也不高，因此需要将其分解成小函数。小函数支持“解释能力，共享能力和选择能力”。</p>
+
+<h4>3.3 Large Class (过大的类）</h4>
+
+<p>和函数一样，每个类的责任都应该明确。当一个类拥有太多责任的时候，这个类往往都很大。这样的类难以理解，调用者用起来很不方便。那么这时候需要将该类分解成几个类，或者使用继承将责任分摊到子类中。</p>
+
+<h4>3.4 Divergent Change(发散式变化) 与 Shotgun Surgery（散弹式修改)</h4>
+
+<p>发散式变化指的是一个类受多种变化影响。而散弹式修改则相反。指一个变化引发多个类的相应改动。两者都需要修改代码，使得外界变化与需要修改的类一一对应。</p>
+
+<h4>3.5 Switch Statements (switch 惊悚现身)</h4>
+
+<p>在面向对象的程序中，要少用switch语句。从本质上，switch语句的问题在于重复。大多数的情况下，可以用多态来替换它。</p>
+
+<h4>3.6 Comments (过多的注释)</h4>
+
+<p>当出现长长的注释的时候，往往是标志着糟糕的代码。因为良好的代码结构是能够自然清晰表现出程序的逻辑的。所以当有长注释的时候，就要考虑重构了。</p>
+
+<h2>四. How &ndash; 如何进行重构</h2>
+
+<p>这是《重构》这本书的最主要的内容。作者从函数，对象，数据，表达式等各方面提出了数十条具体的重构的手法。下面我将选择几个自己认为较有启发的手法来介绍。</p>
+
+<h3>4.1 查询取代临时变量</h3>
+
+<p>如果程序中临时变量用来保存某一表达式的运算结果，那么可以考虑将表达式提炼到一个函数中，并将临时变量的引用点替换为对新函数的使用。书中的例子如下：</p>
+
+<pre><code>double base_price = quantity * itemPrice;
+if (base_price &gt; 1000)
+    return base_price * 0.95;
+else 
+    return base_price * 0.98;
+</code></pre>
+
+<p>经过重构后会是</p>
+
+<pre><code>if (basePrice() &gt; 1000)
+    return basePrice() * 0.95;
+else
+    return basePrice() * 0.98;
+...
+double basePrice() {
+    return quantity * itemPrice;
+}
+</code></pre>
+
+<p>这个例子很简单。咋一看这种重构似乎完全没有必要，同一个值重复计算了3次，这难道不是浪费时间么。“过早优化是万恶之源”， 在一开始时，比起程序的性能，我们更应该关注程序的结构。一旦程序有了良好的结构，那么针对功能问题进行优化将变得简单。特别是引发性能问题的往往是代码中的某一小块。那么去除临时变量就能使程序的结构变好么？上面的例子似乎不能很好说明问题。但是想象一个数百行的程序，对临时变量的使用散布其中，那么使用临时变量就不是一个好主意了。因为代码阅读者难以理解临时变量的用途，这个变量在这个scope里还有效么？这个变量的值中途的会被修改么？诸如此类。《代码大全》里也说过，研究表明变量定义的位置与使用它的位置的距离与代码的质量成反比。如果将临时变量变成函数，那么就减少了程序中的状态的数量，因此减少了程序的复杂度。</p>
+
+<h3>4.2 移除对参数的赋值</h3>
+
+<p>如果代码对一个函数进行赋值，那么以一个临时变量代替该参数的位置。</p>
+
+<pre><code>int discount(int input, int quantity, int yearToDate) {
+   if (input &gt; 50)  input -= 2;
+   ...
+}
+</code></pre>
+
+<p>在重构后是：</p>
+
+<pre><code>int discount (int input, int quantity, int yearToDate) 『
+    int result = input; 
+    if (result &gt; 50) result -=2;
+    ...
+}
+</code></pre>
+
+<p>在项目的代码中我也曾经看到过这种风格的代码，当时还不能理解。之所以要重构，是因为原来的情况下降低了代码的清晰度，混用了按值传递与按引用传递两种参数传递方式。Java是按值传递，对参数赋值不会影响调用端，但是接触过引用传递的人可能会混淆。还有就是如果参数只表示“传进来的参数”，那么代码就更清晰了，这遵循了一个变量只有一个用途的原则。</p>
+
+<h3>4.3 封装集合</h3>
+
+<p>如果你有一个函数返回集合，那么应该让该类返回一个只读的副本，并且在类中提供移除和添加集合元素的函数。</p>
+
+<pre><code>public class Person {
+    public Set getCourses() {...}
+    public void setCourses(Set s) {...}
+}
+</code></pre>
+
+<p>在重构后是：</p>
+
+<pre><code>public class Person {
+    public unmodifiable Set getCourses() {...}
+    public addCourse(Course c) {...}
+    public removeCourse(Course c) {...}
+}
+</code></pre>
+
+<p>这么做的原因是，原先的类封装并不严格，实际上暴露了类中集合的数据结构。通过重构，调用者通过getter方法只能取道只读副本，要改变集合必须调用类中的函数，这样就将集合的数据结构封装起来。调用者所面对的是这个类的抽象层次，而不是类内部更具体的概念。这遵循了概念一致性的原则。整个类处于同一个抽象层次上。 更具体而言，我们可以方便地替换类中集合的实际数据结构而不用担心影响调用者。</p>
+
+<h3>4.4 取代类型码</h3>
+
+<p>取代类型码的原因在于编译器无法对其做有效的类型检查，因为它只是一个数值。而接收类型码的函数，参数也只是一个普通数值，这样降低了可读性，从而导致bug。取代类型码，有三种模式，分别是用类替换，用子类替换和用State/Strategy替换。</p>
+
+<h4>4.4.1 用类替换</h4>
+
+<p>当类型码是纯数据的时候，即不会在switch语句中引起行为变化时，才能够用此种模式。否则则要考虑后面两种模式了。书中例子如下：</p>
+
+<pre><code>class Person {
+    public static final int O = 0;
+    public static final int A = 1;
+    public static final int B = 2;
+    public static final int AB = 3;
+
+    private int _bloodGroup;
+    public Person(int bloodGroup) {
+        _bloodGroup = bloodGroup;
+    }
+    public void setBloodGroup(int arg) {
+        _bloodGroup = arg;
+    }
+    public int getBloodGroup() {
+        return _bloodGroup; 
+    }
+}
+</code></pre>
+
+<p>通过用类BloodGroup类替换，重构后的代码如下：</p>
+
+<pre><code> class BloodGroup {
+    public static final BloodGroup O = BloodGroup(0);
+    public static final BloodGroup A = BloodGroup(1);
+    public static final BloodGroup B = BloodGroup(2);
+    public static final BloodGroup AB = BloodGroup(3);
+
+    private final int _code;
+    private BloodGroup(int code) { _code = code; }     
+ }
+
+ class Person {
+    private BloodGroup _bloodGroup;
+    public Person(BloodGroup bloodGroup) {
+        _bloodGroup = bloodGroup;
+    }
+    public void setBloodGroup(BloodGroup arg) {
+        _bloodGroup = arg;
+    }
+    public BloodGroup getBloodGroup() {
+        return _bloodGroup; 
+    }
+}
+</code></pre>
+
+<p>值得注意的是，这里我直接得到了最终的重构结构，而忽略了中间逐步迭代的过程。书中给出了详细的中间过程，教我们如果通过微小的多次改动，先引入BloodGroup类，然后替换到掉调用端的代码，最后删掉旧的使用数值的函数，从而完成重构过程。我们应该认识到，引入一个类来替代类型码，能够提供更好的抽象而提高可读性，而专门的类型也使代码更加健壮。</p>
+
+<h4>4.4.2 用子类替换</h4>
+
+<p>前面提到过，如果类型码是影响到了switch中的行为，那么应该使用子类来替换，这是为了发挥多态系统的作用，使子类能够根据自己类型而执行正确的行为，而不是依赖于数值型的类型码。但是在两种情况下，即(1)类型码的值在对象创建后会改变，(2)类型码宿主类已经存在子类了，那么就必须使用下一节介绍的State/Strategy模式来替换。书中的例子如下：</p>
+
+<pre><code>class Employee {
+    private static _type;
+    static final int ENGINEER = 0;
+    static final int SALESMAN = 1;
+    static final int MANAGER = 2;
+
+    Employee (int type) { _type = type; }
+    int getType() { return _type; }
+}
+</code></pre>
+
+<p>重构后的代码如下：</p>
+
+<pre><code>class Engineer extends Employee {
+    int getType() { return Employee.ENGINEER; }
+}
+
+class Employee {
+    ....
+    abstract int getType();
+
+    static Employee create(int type) {
+        switch (type) {
+            case ENGINEER: return new Engineer();
+            case SALESMAN: return new Salesman();
+            case MANAGER:  return new Manager();
+        }
+    }
+</code></pre>
+
+<p>通过引入子类，我们将对不同行为的了解，从类用户转移到了类自身。原来的情况下，用户需要知道类所拥有的类型以及对应的行为，重构后，用户之需要调用同一个方法，不同的子类会有有不同的行为。这利用了多态的威力，减轻了用户的负担。</p>
+
+<h4>4.4.3 State/Strategy模式替换</h4>
+
+<p>如上节提到的，如果状态码会改变，或者宿主类已经有子类了，那么就必须用State/Strategy模式替换。沿用上节的Employee例子，在原来的类中添加一个新的方法：</p>
+
+<pre><code> class Employee {
+    ....
+    int payAmount () {
+        switch(_type) {
+            case ENGINEER: return _monthlySalary;
+            case SALESMAN: return _monthlySalary + _commision;
+            case MANAGER:  return _monthlySalary + _bonus;
+        }
+    }
+}
+</code></pre>
+
+<p>在重构后代码是：</p>
+
+<pre><code>class EmployeeType {
+    static final int ENGINEER = 0;
+    static final int SALESMAN = 1;
+    static final int MANAGER = 2;
+    abstract int getTypeCode();
+    static EmployeeType newType(int code) {
+        switch (code) {
+            case ENGINEER: return new Engineer();
+            case SALESMAN: return new Salesman();
+            case MANAGER:  return new Manager();
+        }
+    }
+}
+
+class Engineer extends EmployeeType {
+    int getType() { return Employee.ENGINEER; }
+    int payAmount(Employee e) { return e.getMonthlySalary; }
+}
+
+class Salesman extends EmployeeType { ... }
+class Manager  extends EmployeeType { ... }
+
+class Employee {
+    private EmployeeType _type;
+    int payAmount () {
+       _type.payAmount (this);
+    }  
+}
+</code></pre>
+
+<p>其实仔细观察，这个和用类替换的区别在于，并不只用单个类来替换类型码，而是先创建一个父类，根据不用的类型码创建不同的子类，并将相应的行为迁移到子类当中。</p>
+
+<h3>4.5 引入空对象</h3>
+
+<p>当在代码中需要再三检查某个对象是否为null的时候，就可以将null值替换为null对象。</p>
+
+<pre><code>if（customer == null） plan = BillingPlan.basic();
+else plan = customer.getPlan();
+</code></pre>
+
+<p>在重构后将是：</p>
+
+<pre><code>plan = customer.getPlan();
+
+public class NullCustomer extends Customer implements Nullable {
+    public Plan getPlan() { return BillingPlan.basic(); }
+}
+
+ public class Customer {
+    private nullObject = new NullCustomer();
+    public static getNull() { return nullObject;}
+ }
+</code></pre>
+
+<p>通过一个null对象，我们利用了多态的好处，即不需要知道对象是什么，只管调用它的某个行为就可以了。例子中如果是NullCustomer,那么getPlan函数就会返回BillingPlan.basic()。这样就不需要重复检测null值并针对空值做特别处理。空对象一定是一个常量，它是不可变的，因此可用Singleton的模式。在Customer类中我们添加了一个工厂方法返回Null Object。而让NullCustomer实现Nullable接口是为了在类型上表明这是一个null object。我们也可以在Customer中添加isNull()的方法并在NullCustomer中重载返回true来达到这个目的。类似的手段在Java库中也存在，比如浮点数中的NaN, POSITIVE_INFINITY都是特例类，它们都降低了“错误处理”的开销。</p>
+
+<h3>4.6 以工厂方法取代构造函数</h3>
+
+<p>如果在创建对象时不仅仅是做简单的构建动作，那么可以将构造函数替换为工厂方法。</p>
+
+<pre><code>Employee (int type) {
+    _type = type;
+}
+</code></pre>
+
+<p>变成：</p>
+
+<pre><code>static Employee create(int type) {
+    return new Employee(type);
+}
+</code></pre>
+
+<p>通过使用工厂方法，我们拥有了更多的灵活性和对实例的控制。比如工厂方法中，可以根据情况返回不同的实现的子类。还有如果该类是功能类，使用工厂方法并将构造函数声明为private，我们可以控制该类的实例只有一个。</p>
+
+<h2>五. Summay &ndash; 总结</h2>
+
+<p>书中有许多妙语，个人最喜欢的是作者引用Kent Beck的一句话</p>
+
+<blockquote><p>&ldquo;我不是伟大的程序员，我只是一个有着优秀习惯的程序员。”</p></blockquote>
+
+<p>重构并非什么高上大的概念，也不仅仅是一项技术，更是一个优秀的习惯。希望本文能够让你对重构有个大概的正确认识，避免像我一开始那样先入为主地错误认识。想要更深入的理解，强烈推荐阅读《<a href="http://book.douban.com/subject/4262627/">重构</a>》这本书.</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-25T21:09:00+08:00" pubdate data-updated="true">Mar 25<sup>th</sup>, 2014</time></div>
+	<div class="tags">
+
+</div>
+	
+</div></article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2013/08/02/note-for-the-c-programming-language/">
+		
+			Note for the C Programming Language</a>
+	</h2>
+	<div class="entry-content">
+		<p>最近读了K&amp;R，也就是传说中的《The C programming language》。作为我第一门学习的语言，对C的喜爱不言而喻。有两年多没接触C，再次回顾，相比其Java和C++等高级语言, 其简洁优美的特性深深吸引了我。以下是阅读过程中在evernote中的一些摘要。</p>
+
+<p>1.You should note that we are using the words definition and declaration carefully when we refer to external variables in this section. Definition refers to the place where the variable is created or assigned storage; declaration refers to places where the nature of the variable is stated but no storage is allocated. <br/>
+强调了声明与定义的区别。声明只是阐述了变量的类型，而没有实际分配内存。定义则为变量分配了内存。</p>
+
+<p>2.An external variable must be defined, exactly once, outside of any function; this sets aside storage for it. The variable must also be declared in each function that wants to access it; this states the type of the variable. The declaration may be an explicit extern statement or may be implicit from context. <br/>
+强调了外部变量的使用方法。必须先在函数外面定义一次，以分配内存空间。而在使用的函数内也要重新声明。声明可以直接使用extern关键字.</p>
+
+<p>3.The problem is distinguishing the end of input from valid data. The solution is that getchar returns a distinctive value when there is no more input, a value that cannot be confused with any real character. This value is called EOF, for end of file. We must declare c to be a type big enough to hold any value that getchar returns. We can&rsquo;t use char since c must be big enough to hold EOF in addition to any possible char. Therefore we use int. <br/>
+说明了getchar的使用方法。为了表明输入结束，getchar会返回EOF。为了能够容纳getchar的返回值，所以必须使用int而不是char</p>
+
+<p>4.strlen(s) returns the length of its character string argument s, excluding the terminal &lsquo;\0&rsquo;.<br/>
+strlen(s)返回的长度不包含表示字符串结尾的&#8217;\0&#8217;.</p>
+
+<p>5.External and static variables are initialized to zero by default. Automatic variables for which is no explicit initializer have undefined (i.e., garbage) values.<br/>
+外部变量与静态变量都会被默认初始化为0。 而未初始化的自动变量的初始值未定义，因此要注意初始化变量。</p>
+
+<p>6.By definition, the numeric value of a relational or logical expression is 1 if the relation is true, and 0 if the relation is false.<br/>
+当关系或逻辑表达式为真时对应的值为1， 假时为0.</p>
+
+<p>7.atoi, which converts a string of digits into its numeric equivalent.<br/>
+atoi将字符串转化为其表示的对应的数值.</p>
+
+<p>8.Declaring the argument x to be an unsigned ensures that when it is right-shifted, vacated bits will be filled with zeros, not sign bits, regardless of the machine the program is run on.<br/>
+将参数x声明为无符号的保证了它是向右移位并且用0来补位.</p>
+
+<p>9.The moral is that writing code that depends on order of evaluation is a bad programming practice in any language.<br/>
+在任何编程语言中， 表达式的结果依赖于其中a,b的估值顺序是一种不好的实践.</p>
+
+<p>10.double atof(); that too is taken to mean that nothing is to be assumed about the arguments of atof; all parameter checking is turned off. This special meaning of the empty argument list is intended to permit older C programs to compile with new compilers. But it&rsquo;s a bad idea to use it with new C programs. If the function takes arguments, declare them; if it takes no arguments, use void.<br/>
+在旧的C语言中，atof()这样会关掉参数检查。空参数列表是为了旧的C程序能够在新编译器下通过编译。新写的程序中，如果有参数，那就声明它。没有参数就使用void.</p>
+
+<p>11. if an external variable is to be referred to before it is defined, or if it is defined in a different source file from the one where it is being used, then an extern declaration is mandatory.<br/>
+必须将变量声明为external的情况有两种，一是在定义它（即为它分配内存前）使用它。二是它在别的文件中定义的。</p>
+
+<p>12.the variables that push and pop use for stack manipulation can be hidden, by declaring sp and val to be static.<br/>
+通过将变量声明为static,可以将其对外隐藏。</p>
+
+<p>13.A register declaration advises the compiler that the variable in question will be heavily used. The idea is that register variables are to be placed in machine registers, which may result in smaller and faster programs. But compilers are free to ignore the advice.<br/>
+将变量声明为register是建议编译器将其放在寄存器中，从而加快读写速度。但是编译器未必采纳该建议。</p>
+
+<p>14. In the absence of explicit initialization, external and static variables are guaranteed to be initialized to zero; automatic and register variables have undefined (i.e., garbage) initial values. For external and static variables, the initializer must be a constant expression.<br/>
+外部变量与静态变量自动初始化为0，而自动变量与寄存器变量则未定义。外部变量与静态变量必须使用常数表达式来初始化。</p>
+
+<p>15.char* pattern = &ldquo;ould&rdquo;;  is a shorthand for the longer but equivalent char pattern[] = { &lsquo;o&rsquo;, &lsquo;u&rsquo;, &lsquo;l&rsquo;, &rsquo;d&#8217;, &lsquo;\0&rsquo; };.</p>
+
+<p>16.#define dprint(expr) printf(#expr &ldquo; = %g\n&rdquo;, expr)
+dprint(x/y) the macro is expanded into printf(&ldquo;x/y&rdquo; &ldquo; = &amp;g\n&rdquo;, x/y);</p>
+
+<p>17.C converts it to *(a+i) immediately; the two forms are equivalent. Applying the operator &amp; to both parts of this equivalence, it follows that &amp;a[i] and a+i are also identical: a+i is the address of the i-th element beyond a.<br/>
+对于数组a[i], 与*(a+i)是等价的</p>
+
+<p>A pointer is a variable, so pa=a and pa++ are legal. But an array name is not a variable; constructions like a=pa and a++ are illegal.<br/>
+指针是变量，但是数组名不是，因此重新赋值或自增都是非法的</p>
+
+<p>If a two-dimensional array is to be passed to a function, the parameter declaration in the function must include the number of columns; the number of rows is irrelevant, since what is passed is, as before, a pointer to an array of rows, where each row is an array of 13 ints. In this particular case, it is a pointer to objects that are arrays of 13 ints. Thus if the array daytab is to be passed to a function f, the declaration of f would be:</p>
+
+<pre><code>f(int daytab[2][13]) { ... }
+</code></pre>
+
+<p>It could also be</p>
+
+<pre><code>f(int daytab[][13]) { ... }
+</code></pre>
+
+<p>since the number of rows is irrelevant, or it could be</p>
+
+<pre><code>f(int (*daytab)[13]) { ... }
+</code></pre>
+
+<p>which says that the parameter is a pointer to an array of 13 integers. The parentheses are necessary since brackets [] have higher precedence than *. Without parentheses
+daytab的类型是一个指向有13个元素的数组的指针。将13个元素的数组看成一个对象a,
+当我们传递a的数组，我们会用a daytab[], 就像int arr[]一样。这就解释了为什么可以有第二种和第三种表达方式。</p>
+
+<p>the declaration:</p>
+
+<pre><code>int *daytab[13]
+</code></pre>
+
+<p>is an array of 13 pointers to integers. More generally, only the first dimension (subscript) of an array is free; all the others have to be specified.<br/>
+daytab的类型那个是一个指针数组</p>
+
+<p>argv[0] is the name by which the program was invoked, so argc is at least 1. If argc is 1, there are no command-line arguments after the program name.<br/>
+argv[0]是程序的名字，因此argc的值至少为1</p>
+
+<p>additionally, the standard requires that argv[argc] be a null point</p>
+
+<pre><code>char **argv
+</code></pre>
+
+<p>argv: pointer to char</p>
+
+<pre><code>int (*daytab)[13]  
+</code></pre>
+
+<p>daytab: pointer to array of 13 int elements</p>
+
+<pre><code>*daytab[13]   
+</code></pre>
+
+<p>daytab: array[13] of pointer to int</p>
+
+<pre><code>void *comp()
+</code></pre>
+
+<p>comp: function returning pointer to void</p>
+
+<pre><code>void (*comp)()
+</code></pre>
+
+<p>comp: pointer to function returning void</p>
+
+<pre><code>char (*(*x())[])()
+</code></pre>
+
+<p>x: function returning pointer to array[] of pointer to function returning char</p>
+
+<pre><code>char (*(*x[3])())[5]
+</code></pre>
+
+<p>x: array[3] of pointer to function returning pointer to array[5] of char</p>
+
+<p>18.Don&rsquo;t assume, however, that the size of a structure is the sum of the sizes of its members. Because of alignment requirements for different objects, there may be unnamed &lsquo;&#8217;holes&rsquo;&lsquo; in a structure. Thus, for instance, if a char is one byte and an int four bytes, the structure:</p>
+
+<pre><code>struct {
+    char c;
+    int i;
+};  
+</code></pre>
+
+<p>might well require eight bytes, not five.<br/>
+一个结构的大小不一定是所有成员变量内存大小之和，因为内存需要对齐，所以存在洞。比如例子的结构占用8字节，第一个四字节中只有第一个字节是有效的。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-02T23:08:00+08:00" pubdate data-updated="true">Aug 2<sup>nd</sup>, 2013</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/categories/c/'>c</a>, <a class='category' href='/blog/categories/reading-note/'>reading note</a>
+
+
+</div>
+	
+</div></article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2013/05/02/effective-java-note-2/">
+		
+			Effective Java Note-2</a>
+	</h2>
+	<div class="entry-content">
+		<h2>创建与销毁对象</h2>
+
+<h3>遇到多个构造器参数时考虑用构建器</h3>
+
+<p>当构造器有多个可选的参数的时候，程序员往往使用重叠构造器模式(telescoping constructor), 即：</p>
+
+<pre><code>public class NutritionFacts
+{
+    private final int servingSize; //required
+    private fianl int serings; required
+    private final int calories; //optional
+    private final int fat;      //optional
+    private final int sodium;   //optional
+
+    public NutritionFacts(int servingSize, int servings)
+    {
+        this(servingSize, servings, 0);
+    }
+
+    public NutritionFacts(int servingSize, int servings, int calories)
+    {
+        this(servingSize, servings, calories, 0);
+    }
+
+    public NutritionFacts(int servingSize, int servings, int calories, int fat)
+    {
+        this(servingSize, servings, calories, fat, 0);
+    }
+
+    public NutritionFacts(int servingSize, int servings, int calories, int fat, int sodium)
+    {
+        this.servingSize = servingSize;
+        this.servings = servings;
+        this.calories = calories;
+        this.fat = fat;
+        this.sodium = sodium;
+    }
+}  
+</code></pre>
+
+<p>这种写法不易与程序员的理解与记忆，很容易将参数的顺序弄错，而编译器也不会发现这种错误，从而导致难以发现的bug。还有一种模式是Java Bean模式，即：</p>
+
+<pre><code>public class NutritionFacts
+{
+    private final int servingSize; //required
+    private fianl int serings; required
+    private final int calories; //optional
+    private final int fat;      //optional
+    private final int sodium;   //optional
+
+    public NutritionFacts(){}
+
+    //setter
+    public void setServiceSize(int val){ servingSize = val; }
+    public void setServings(int val){ servings = val; }
+    public void setCalories(int val){ calories = val; }
+    public void setFat(int val){ fat = val; }
+    public void setSodium(int val){ sodium = val; }     
+}  
+</code></pre>
+
+<p>这种模式虽然易于理解和使用，但是有一个缺点，就是在构造过程中Java Bean可能处于不一致的状态，而且也不能将其设计成不可变(imutable)的类。后面介绍的构建器(builder)模式既能够有第一种模式的安全性，又有第二种模式的可读性。它的例子如下：</p>
+
+<pre><code>public class NUtritionFacts
+{
+    private final int servingSize; //required
+    private fianl int serings; required
+    private final int calories; //optional
+    private final int fat;      //optional
+    private final int sodium;   //optional
+
+    public static class Builder
+    {
+        private final int servingsize; //required
+        private fianl int serings; //required
+        private final int calories = 0; //optional
+        private final int fat = 0;      //optional
+        private final int sodium = 0;   //optional
+
+        public Builder(int servingSize, int servings)
+        {
+            this.servingSize = servingSize;
+            this.servings = servings;
+        }
+
+        public Builder calories(int val){ calories = val; return this;}
+        public Builder fat(int val){ fat = val; return this;}
+        public Builder sodium(int val){ sodium = val; return this;} 
+
+        public NutritionFacts build()
+        {
+            return new NutritionFacts(this);
+        }
+    }
+
+    public NutritionFacts(Builder builder)
+    {
+        servingSize = builder.servingSize;
+        servings = builder.servings;
+        calories = builder.calories;
+        fat = builder.fat;
+        sodium = builder.sodium;
+    }
+} 
+</code></pre>
+
+<p>以上的例子有三点需要注意。<br/>
+1. Builder是一个内嵌类，而且是静态的。静态的内嵌类和静态的成员变量不一样。静态的内嵌类表示该类和外围类的实例没有关联。如果内嵌类不是静态的，那么必须先有外围类的实例，才能有内嵌类的实例，内嵌类的实例中会有对外围类实例的引用。<br/>
+2. 细心的读者可能发现，在NutritionFacts(Builder builder)这个构造器方法中，能够使用builder这个实例的私有域，这是因为Builder是NutritionFacts的内嵌类，Builder的私有域对于NutritionFacts内的方法是可见的。
+3. Builder中的setter方法返回的是Builder对象，在设值后都会return this,这是为了能够链式调用，如：</p>
+
+<pre><code>NutritionFacts cala = new NutritionFacts.Builder(240 , 0).calories(100).sodium(35).build();
+</code></pre>
+
+<h3>用私有构造器或者枚举强化Singleton属性</h3>
+
+<p>Singleton指一个类只有一个实例。实现单例有3种方式。<br/>
+第一种方法的公有静态成员是个final域：</p>
+
+<pre><code>public class Elvis
+{
+    public static final Elvis INSTANCE = new Elvis();
+    private Elvis() {...}  
+    ...  
+} 
+</code></pre>
+
+<p>第二种方法中公有的成有是个静态工厂方法：</p>
+
+<pre><code>public class Elvis  
+{
+    private static final Elivs INSTANCE = new Elvis();
+    private Elsvis(){...}
+    public static Elvis getInstance()
+    {
+        return INSTANCE;
+    }
+}
+</code></pre>
+
+<p>需要注意的是，以上两种方法，如果要将其变成是可序列化(serializable)的，为了保证其Singleton的属性，需要将所有实例域声明为transient，并且提供一个readResolve方法。
+第三种方法是将其定义为枚举类， 枚举类本身就是Singlenton，并且无偿提供了序列化机制。</p>
+
+<h3>通过私有构造器强化不可实例化的能力</h3>
+
+<p>对于一些工具类，如java.lang.Math, java.util.Coolections, 把基本类型的值或者特定接口的对象上的静态方法组织起来，实例对他们没有意义，确保它们不会被实例化的方法是将构造器定义为私有的(private)， 如：</p>
+
+<pre><code>public class UtilityClass 
+{
+    private UtilityClass();
+    ...
+}  
+</code></pre>
+
+<p>这种做法的副作用是该类是不能被继承的。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-02T00:18:00+08:00" pubdate data-updated="true">May 2<sup>nd</sup>, 2013</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/categories/java/'>java</a>, <a class='category' href='/blog/categories/reading-note/'>reading note</a>
+
+
+</div>
+	
+</div></article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2013/04/25/effective-java-note-1/">
+		
+			Effective Java Note-1</a>
+	</h2>
+	<div class="entry-content">
+		<h2>前言</h2>
+
+<p>对于Effective java，有人初看时可能会觉得这本书讲的都是java的一些技巧。书中确实介绍了很多更好的使用java特性的技巧。但是，本书的精华在于怎么用写API的思想来编写程序。在微薄上看到陈皓老师的一条微薄，印象深刻，大致意思是目前很多程序员仍然带着写应用的思想在写程序，而不是从写平台API提供者的角度来写。这一系列的读书笔记将突出书中的API编写思想。注：本文的读者需要对面向对象编程(Object Oriented Programming)有一定的了解。</p>
+
+<h2>创建与销毁对象</h2>
+
+<h3>使用静态工厂方法代替构造器</h3>
+
+<p>静态工厂方法的例子如下：</p>
+
+<pre><code>public static Boolean valueOf(boolean b)
+{
+    return b ? Boolean.TRUE : Boolean.FALSE;
+}
+</code></pre>
+
+<h4>静态工厂方法(static factory method)的优缺点</h4>
+
+<p>为什么要使用静态工厂方法(static factory method)呢？<br/>
+1. <em>静态工厂方法有名字。</em><br/>
+写程序时，变量名，方法名都是很重要的元素。<em>程序的本质在于抽象</em>，一个好的名字就是好的抽象。构造器(constructor)的名字都必须和类名相同，当类拥有多个构造器的时候，使用者往往很难理解不同构造器的含义。而静态方法可以通过使用不同的名字代表该方法的抽象，因此使用者不会混淆。<br/>
+2. 不必每次被调用都创建心的对象。<br/>
+即通过使用静态工厂方法可以实现单例模式(singleton)，从而避免创建不必要的重复对象。上面的例子中，Boolean的valueOf方法每次返回的都是一个枚举(enum)类型，而<em>枚举类型就是单例的</em> <br/>
+3. 可以返回原类型的任何字类型对象。<br/>
+例子如下：</p>
+
+<pre><code>public static Type getInstance()
+{
+    return new SubType();
+}  
+</code></pre>
+
+<p>例子中的SubType是Type的子类。使用构造器的时候，用户只能得到该类的实例，而静态方法能够返回其子类的类型。这就是设计模式中所强调的<em>针对接口编程</em>的原则，这将增加代码的灵活性，如果日后需要对Type有新的实现，那么只需要修改静态方法中的一句话就够了，即return new AnotherSubType();。书中在此点时介绍了服务者提供者框架(service provider framework), 这是一个十分重要的设计模式，此节后面会详细介绍。<br/>
+4. 创建参数化实例的时候代码能够更加简洁。
+书中的例子如下：</p>
+
+<pre><code>Map&lt;String, List&lt;String&gt;&gt; m = new HashMap&lt;Stirng, List&lt;String&gt;&gt;();
+</code></pre>
+
+<p>当初始化参数化的容器时，需要重复敲写两次参数。而使用静态方法的话：</p>
+
+<pre><code>public static &lt;K, V&gt; HashMap&lt;K, V&gt; newInstance()
+{
+    return new HashMap&lt;K, V&gt;();
+}
+Map&lt;String, List&lt;String&gt;&gt; m = HashMap.newInstance()  
+</code></pre>
+
+<p>因为编译器的类型推导(type inference)，上面的静态范型方法能够推导出 K=String, V=List&lt;Stirng>的事实。<br/>
+静态方法的缺点有： <br/>
+1. 如果类不含有非私有的构造器，就不能被继承。<br/>
+2. 不能和其他静态方法区分开。</p>
+
+<h4>服务者提供者框架(service provider framework)</h4>
+
+<p>服务提供者框架有三个基本的组件：<em>服务接口(service API)</em>，<em>提供者注册API(provider registration API)</em>， <em>服务访问API(service access API)</em>。还有一个可选的组件是<em>服务提供者接口(service provider interface)</em>。首先举个通俗的例子来帮助大家理解这个框架的三个基本组件。大学里某门课程，往往会提供数个教学班，在不同时间由不同老师来上。虽然老师不一样，但是课程的教学大纲必须是一致的，而且期末考试也是一样的。课程的大纲，期末试卷，都是由课程组规定的，是该门课提供给学生的统一的服务，也就是服务接口。无论你上A老师的还是B老师的计算机组成，都是学习多周期CPU，内存模型等知识，而不可能是计算理论的知识。但是不同的老师，可以采取不同的教学模式，A老师可能比较注重理论，B老师则可能注重实践，即他们对服务接口有不一样的实现。A老师和B老师要开课，需要将他们的课程的地点和时间等信息填表向课程组申请开课。这个申请的过程即提供者注册API，即服务者将服务获取的渠道注册在某个地方。学生选课的过程则是服务访问API，即获取服务的方式。笔者接下来将详细介绍每一个组件。<br/>
+1. 服务接口 <br/>
+服务接口定义了系统所能够提供的服务，一般是有平台工程师编写，所谓平台就是上面例子中的课程组。书中例子如下：</p>
+
+<pre><code>public interface Service
+{
+    ...// Service-specific methods, 即这个接口定义的方法，也就是Service所能提供的服务
+}  
+</code></pre>
+
+<p>对于一个开放平台，这个接口给该平台的应用工程师使用，应用工程师则是例子中的老师，是服务的真正提供者。<br/>
+2. 提供者注册API与服务访问API <br/>
+这两个组件一般是在一个工厂类中实现的，例子如下：</p>
+
+<pre><code>public class Services
+{
+    private Services(){}
+
+    private static final Map&lt;String, Service&gt; services = new ConcurrentHashMap&lt;String, Service&gt;();
+    public static final String DEFAULT_SERVICE_NAME = "def";
+
+    //提供者注册API(provider registration API)
+    public static void registerDefaultService(Service s)
+    {
+        registerService(DEFAULT_SERVICE_NAME, s);
+    }
+
+    public static void registerService(String name, Service s)
+    {
+        services.put(name, p);
+    }
+
+    //服务访问API(service access API)
+    public static Service newInstance()
+    {
+        return services.newInstance(DEFAULT_SERVICE_NAME);
+    }
+
+    public static Service newInstance(String name)
+    {
+        Service s = services.get(name);
+        if (s == null)
+            throws IllegalArgumentException( "No service registered with name" + name );
+        return s;
+    }
+}  
+</code></pre>
+
+<p>该类是模仿书中的例子编写的，书中的例子包含了可选组件服务提供者接口，这里为了简单而只用了三个基本组件。首先注意该类的构造器是私有的，即该类<em>不可实例化</em>。对于提供者注册API和服务访问API，都重载了一个方法，即一个默认的服务。比如当学生没有主动选课的时候系统将自动为他选择一个默认的老师。而注册和获取实际都是对一个Map进行操作，注意该Map是一个ConcurrentHashMap，这是为了<em>线程安全</em>，防止多个线程同时调用类中方法时出现数据不一致或者冲突的情况。<br/>
+3. 服务提供者接口<br/>
+服务提供者接口实际上是将服务提供和服务注册分离开。例子如下：</p>
+
+<pre><code>public interface Provider
+{
+    Service newService();
+}
+</code></pre>
+
+<p>然后将第二点的例子中的Service类替换成Provider, 如下：</p>
+
+<pre><code>public class Services
+{
+    private Services(){}
+
+    private static final Map&lt;String, Provider&gt; providers = new ConcurrentHashMap&lt;String, Provider&gt;();
+    public static final String DEFAULT_SERVICE_NAME = "def";
+
+    //提供者注册API(provider registration API)
+    public static void registerDefaultProvider(Provider s)
+    {
+        registerService(DEFAULT_SERVICE_NAME, s);
+    }
+
+    public static void registerProvider(String name, Provider s)
+    {
+        providers.put(name, p);
+    }
+
+    //服务访问API(service access API)
+    public static Service newInstance()
+    {
+        return providers.newInstance(DEFAULT_SERVICE_NAME);
+    }
+
+    public static Service newInstance(String name)
+    {
+        Service s = providers.get(name);
+        if (s == null)
+            throws IllegalArgumentException( "No provider registered with name" + name );
+        return s.newService();
+    }
+}
+</code></pre>
+
+<p>这样注册的就是Provider而不是Service了，那么同一个提供者，日后可以修改自己的服务，并在自己实现的Provider子类中的newService()方法中提供自己新的服务。这样就大大增加了灵活性。</p>
+
+<p>总而言之，服务提供者框架是一个十分重要而且常用的框架，使用它来创建API，可以大大的<em>增加API的灵活性，达到高内聚性和低耦合度</em>。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-25T23:41:00+08:00" pubdate data-updated="true">Apr 25<sup>th</sup>, 2013</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/categories/java/'>java</a>, <a class='category' href='/blog/categories/reading-note/'>reading note</a>
+
+
+</div>
+	
+</div></article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2012/12/30/xie-zai-2012de-mo-wei/">
+		
+			写在2012的末尾</a>
+	</h2>
+	<div class="entry-content">
+		<p>一转眼，就来到了12年的末尾了。还记得去年的这个时候，一个人漫步在新加坡的街头，看着熙熙攘攘的庆祝的人群，独自品尝着孤单。孤单于人是有益，特别是这个喧嚷的时代，能够一个人静下来是多么重要。然而在新加坡，心却是焦躁不安的，直到踏上旅程那刻，才踏实下来。因为它早已知道我想要的是什么。回到国内，完成毕设，告别众人，开始工作，它再也没不安过了，因为我正走在了属于自己的道路上。</p>
+
+<p>Talk is cheap. 再多的话，也不过说给自己听罢了。此文是这个博客第一篇也是最后一篇絮絮叨叨的博文。以后的文章是记录和分享自己对技术的学习与思考。下一篇文章是介绍如何在VPS上搭建自己的博客。</p>
+
+<p>另外，2013的学习计划有以下几点:</p>
+
+<ul>
+<li>算法
+  实现重要的数据结构
+  实现重要的算法</li>
+<li>Ruby&amp;Rails
+  Ruby元编程
+  Ruby语言原理
+  Rails的应用</li>
+<li>Java
+  Java的语言特性，原理
+  Java web编程
+  OO编程以及设计模式</li>
+<li>操作系统
+  阅读Minix的内核代码
+  通过APUE学习系统编程
+  通过上面两项学习C++</li>
+</ul>
+
+
+<p>不怕慢，就怕站。厚积薄发, 相信时间的力量。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-30T23:17:00+08:00" pubdate data-updated="true">Dec 30<sup>th</sup>, 2012</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/categories/life/'>life</a>
+
+
+</div>
+	
+</div></article>
+
+<nav id="pagenavi">
+    
+    
+    <div class="center"><a href="/blog/archives">Blog Archives</a></div>
+</nav></div>
+	<footer id="footer" class="inner">Copyright &copy; 2014
+
+    Zion Wu
+
+</footer>
+	<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+
+
+
+
+</body>
+</html>
