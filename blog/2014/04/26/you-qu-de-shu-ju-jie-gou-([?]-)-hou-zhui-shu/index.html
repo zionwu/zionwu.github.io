@@ -1,0 +1,241 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>算法书上没有的数据结构（一）-后缀树 - Zion Blog</title>
+	<meta name="author" content="Zion Wu">
+
+	
+	<meta name="description" content="前言 这个系列的文章将介绍一些在一般算法书上很少提到，但是在实际应用中却发挥着重要作用的数据结构。希望读者通过学习这些数据结构的原理与应用，为日后工作学习中的编程添加了更多选择。 后缀树 什么是后缀树 顾名思义，后缀树是基于树的一种数据结构，它表示了给定字符串的所有后缀， &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="Zion Blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+<body>
+	<header id="header" class="inner"><h1><a href="/">Zion Blog</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+	<li><a href="/about-me">About me</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+	<li><a href="/about-me">About me</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="https://www.google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:zionwu.github.io">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		
+		
+    
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="https://www.google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:zionwu.github.io">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h2 class="title">算法书上没有的数据结构（一）-后缀树</h2>
+	<div class="entry-content"><h2>前言</h2>
+
+<p>这个系列的文章将介绍一些在一般算法书上很少提到，但是在实际应用中却发挥着重要作用的数据结构。希望读者通过学习这些数据结构的原理与应用，为日后工作学习中的编程添加了更多选择。</p>
+
+<br />
+
+
+<h2>后缀树</h2>
+
+<h3>什么是后缀树</h3>
+
+<p>顾名思义，后缀树是基于树的一种数据结构，它表示了给定字符串的所有后缀，对字符串的许多重要操作能够提供快速的实现。后缀数在数据挖掘中被广泛的使用。它也是我本科毕业设计中的序列模式挖掘算法的核心数据结构。后缀树的定义如下：</p>
+
+<blockquote><ol>
+<li><strong>对于一个m个字符长的字符串S, S对应的后缀树T有着m个叶子节点.</strong></li>
+<li><strong>每个内节点（除了叶子节点和根节点以外的节点），都有至少有两个子节点，以及每条边都被S的非空子字符串所标记。</strong></li>
+<li><strong>从根节点到叶子节点，将所有边的标记子字符串连接起来，必定是字符串S的一个后缀</strong>。</li>
+</ol>
+</blockquote>
+
+<p>上面的定义过于抽象，让我们看一个实际的例子。对于字符串<strong>“BANANA”</strong>, 它的后缀树是：</p>
+
+<p><img class="center" src="./../images/suffix-tree/suffixtree.png" width="350"></p>
+
+<p>我们通过上图来解释之前提到的后缀数的三个性质: <br/>
+*  性质1：对于<strong>“BANANA”</strong>，该字符串的后缀有六个，而图中的树也有六个叶子节点。<br/>
+*  性质2：对于图中的内节点（即圆形节点），都至少有两个子节点。而每条边上被子字符串所标记。   <br/>
+*  性质3：可以看到，从根节点到叶子节点1, 依次将边上标记的字符串连接起来，组成的是<strong>“ANANA”</strong>，是<strong>&ldquo;BANANA&rdquo;</strong>的一个后缀。实际上，从根节点到每个叶子节点的边的标记字符串的连接，都是<strong>&ldquo;BANANA&rdquo;</strong>的后缀。</p>
+
+<p>细心的读者可能会发现，图中的字符串末尾有<strong>“$&ldquo;</strong>符号。比如从根节点到叶子节点0的边上，标记的字符串是<strong>&#8220;BANANA$&rdquo;</strong>，这个<strong>&ldquo;$&rdquo;</strong>有何用途呢？能否将它去掉呢？ <strong>“$”</strong>是为了解决一个问题而引入的方案。如果字符串S的后缀中，有后缀s1是后缀s2的前缀的话，那么在后缀树中，s1将不会以叶子节点结束。用<strong>&ldquo;BANANA&rdquo;</strong>的例子,  后缀<strong>“A”</strong>是后缀<strong>“ANANA”</strong>的前缀，没有<strong>&ldquo;$&rdquo;</strong>的话，那就没有叶子节点5, 那么<strong>&ldquo;A&rdquo;</strong>就只是一个内节点了，这违反了性质1，2。<strong>“$”</strong>是字符串的符号集以外的符号，将它添加到末尾后，就不会有后缀成为其他后缀的前缀了，那么性质1,2也就成立 了。理解这一点十分重要，希望读者想清楚这个问题。</p>
+
+<h3>如何构建后缀树</h3>
+
+<h4>简单的算法</h4>
+
+<p>首先我们介绍一个简单的构建算法。对于一个长度为m的字符串S，定义S[i..j]是S从位置i到j的的子字符串。比如对于“BANANA”，S[4..6]是字串&#8221;ANA&#8221;。那么构建长度为m的字符串的后缀树的简单算法如下：</p>
+
+<blockquote><ol>
+<li>将一条边S[1..m]作为后缀树T的初始形状。</li>
+<li>对于i = 2&hellip;m, 依次将S[i..m]插入到T中。</li>
+</ol>
+</blockquote>
+
+<p>下图是以上述算法构建“BANANA”的后缀树的过程：  <br/>
+ <img class="center" src="./../images/suffix-tree/simple-alo.png"></p>
+
+<p>上图从左到右依次将后缀“BANANA”, &ldquo;ANANA&rdquo; &hellip;“A” 插入到后缀树中。对于长度为m的字符串，这个算法的时间复杂度是O(m<sup>2</sup> )。在数据挖掘的应用中，对于大规模的数据集，这个算法的效率是不能满足需求的。</p>
+
+<h4>Ukkonen’s算法</h4>
+
+<p><a href="http://en.wikipedia.org/wiki/Ukkonen's_algorithm">Ukkonen’s算法</a>是一个线性算法，该算法是E. Ukkonen在论文 《On-line construction of suffix trees》中提出的。我们先忽略一些细节，从高层次来描述该算法，让读者对算法的思想有大致的掌握。 <br/>
+首先，我们有以下的定义：</p>
+
+<blockquote><p>Ti 是字符串S的子串S[1..i]的后缀树。</p></blockquote>
+
+<p>Ukkonen’s算法分成m个步骤（m是字符串S长度），在步骤i+1中，我们将在后缀树<strong>Ti</strong>的基础上，构建后缀树<strong>Ti+1</strong>。而对于步骤i+1, 有i+1个操作。在第j个操作中，首先找到S[j..i]的叶子节点，然后将字符S[i+1]添加到叶子节点上。以“BANANA”为例子，一共有6个步骤。在第4步中，基于“BAN”的后缀树T3已经存在了，我们要在以T3为基础构建T4，即“BANA”的后缀树。在这一步中，将有4个操作，就是将字符“A”添加到T3的各个叶子节点中。要注意的是，这样描述的算法的时间复杂度是O( m<sup>3</sup> )，比之前介绍的算法更慢！ 这是因为我们忽略了一些重要的优化手段。从高层次理解了算法的思路后，接着将介绍算法中如何使用优化手段将时间复杂度降为O(m)。</p>
+
+<h4>1. 后缀链接</h4>
+
+<p>后缀链接的定义如下：</p>
+
+<blockquote><p>xs表示任意字符串，其中x表示单个字符，而s表示字符串。对于后缀树中的节点v, 对应边上的标识字符串是xs。如果存在另外一个节点s(v), 其对应边上的标识字符串是s，那么从v到s(v)的链接就是后缀链接。</p></blockquote>
+
+<p>在第一幅图中，虚线表示的就是后缀链接。对于图中后缀树深度为1的两个内节点，右边的节点的对应边的标识字符串是&#8221;NA&#8221;，而左边节点的对应边的标识字符串是“A”, 因此从右边节点有一虚线指向左边节点。</p>
+
+<p>了解了后缀链接的概念后，我们接下来看算法如何使用它来优化。在第i+1步骤的第j个操作中，我们已经将字符S[i+1]添加到S[j..i]的叶子节点。那么在第j+1个操作中，我们想要将S[i+1]添加到S[j+1..i]的叶子节点时，我们遵循以下规定： <br/>
+1.完成第j个操作后，我们从S[j..i+1]的叶子节点往上前进，要么前进一步到了根节点，要么前进直到找到一个拥有后缀链接的节点v， 其中路径上的标识字符串是s。 <br/>
+2.如果找到v，那么沿着后缀链接走到s(v)。   <br/>
+3.从s(v)往下走，根据s选择路径，找到S[j+1..i]的叶子节点。</p>
+
+<p>通过后缀链接，我们避免了每次操作都从根节点开始寻找需要改变的叶节点。以“BANANA“为例子，在第4步以T3(&ldquo;BAN&rdquo;)为基础构建T4(&ldquo;BANA&rdquo;), 完成了第一个操作，将“A&#8221;添加到“BAN”对应的叶节点。下一个操作，我们需要将“A&#8221;添加到”AN“, 注意根据定义从“BAN”的叶节点会有后缀链接到”AN“的叶节点，那么我们直接根据后缀链接就可以快速找到”AN“的叶节点了。当然这个例子比较简单，更加通用的例子可以根据下图来帮助理解：  <br/>
+<img class="center" src="./../images/suffix-tree/suffix-link.png" width="320"></p>
+
+<h4>2. 跳跃比较</h4>
+
+<p>第二个加速的技巧叫做跳跃比较。当从节点s(v)往下走时，我们不需要路径上标识字符串的每一个字符，只需要比较第一个字符串就可以了。这是因为根据后缀链接和后缀树的定义，如果v到从S[j..i+1]的叶子节点的路径标识字符串是a，那么从s(v)到S[j+1..i]的叶子节点的路径标识字符串叶也必定是a, 那么我们就可以放心只比较第一个字符就可以了，不必比较每一个字符，如下图所示：  <br/>
+<img class="center" src="./../images/suffix-tree/skip-count.png" width="320"></p>
+
+<h4>3. 更多技巧</h4>
+
+<p>还有两个重要的加速的技巧是： <br/>
+1.如果在第i+1个步骤，在第j个操作要将S(i+i)添加到S[j..i]时，发现S[j..i+1]已经存在了，那么我们可以结束这个步骤。因为S[k..i+1] (j&lt; k &lt; i)也必定已经存在于树中，没有必要做后面的的操作了。 <br/>
+2.一个叶子节点，在构建的过程中将一直叶子节点，只不过它对应的路径的标识字符串不断增长。那么在第i+1个步骤中，如果我们第一次创建一个叶子节点，它的路径标识字符串应该是S[j..i+1], 我们可以用S[j..m]来标识它。因为在后面的操作中，S[j..i+1]将逐渐被拓展成S[j..m]。那么我们不如一次就完成。</p>
+
+<p>使用了上面的技巧后，构建后缀树的时间复杂度减少到O(m)。 虽然感觉不可思议，但是确实是如此。而上面提到的技巧都不大直观，不利于理解。下面我将以”BANANA“为例，讲解使用上面技巧构建后缀树的过程，希望能够帮助到理解。</p>
+
+<h4>4. 实例讲解</h4>
+
+<p>TBD</p>
+
+<h3>后缀树的应用</h3>
+
+<p>后缀树在数据挖掘的应用中有着广泛的用途。它对字符串的各种操作提供了性能优秀的实现。下面简单介绍一下它的各种应用。   <br/>
+1. 将两个字符串构建同一个后缀树。使用后缀树，我们可以迅速找到两个字符串间的公共子字符串。只要遍历后缀树，找到两个字符串共享的叶子节点即可。  <br/>
+2. 将多个字符串构建一个后缀树，我们可以找到这些字符串的公共子字符串，以及某个子串出现的频率等数据。这些数据和操作在模式挖掘和模式匹配中发挥着重要作用。</p>
+
+<h3>总结</h3>
+
+<p>后缀树的概念虽然不难理解，但是线性时间的Ukkonen’s算法却十分晦涩。这是因为它使用了众多基于后缀数的特性的优化技巧，这些技巧都不大直观，必须十分了解后缀树的特性后，才能理解这些技巧的原理。在我学习的过程中，只看书或者讲解也是半知半解，最后通过调试代码，重现整个构建过程，才最终理解了算法的原理。后缀树的代码在我的github的<a href="https://github.com/zionwu/suffix_tree">suffix-tree repos</a>中有提供。希望这篇文章以及代码能够帮助你深入理解后缀树和Ukkonen’s算法。</p>
+
+<h4>参考资料</h4>
+
+<ol>
+<li>Gusfield, Dan (1999) [1997]. Algorithms on Strings, Trees and Sequences: Computer Science and Computational Biology. USA: Cambridge University Press. ISBN 0-521-58519-8.</li>
+<li><a href="http://en.wikipedia.org/wiki/Suffix_tree">http://en.wikipedia.org/wiki/Suffix_tree</a></li>
+</ol>
+
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-26T01:47:00+08:00" pubdate data-updated="true">Apr 26<sup>th</sup>, 2014</time></div>
+	<div class="tags">
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2016
+
+    Zion Wu
+
+</footer>
+	<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+
+
+
+
+</body>
+</html>

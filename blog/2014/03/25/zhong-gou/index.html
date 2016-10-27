@@ -1,0 +1,446 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>浅谈重构--《重构》读书笔记 - Zion Blog</title>
+	<meta name="author" content="Zion Wu">
+
+	
+	<meta name="description" content="以前听到重构这个词的时候，第一印象对软件的代码做大规模的调整，仿佛当今遍地都在进行的事情&mdash;拆迁重建，推倒重来。因此也一直觉得重构是一项很高级的活动，自己可能还远没有这种重构的能力。而在工作中，随着自己对代码理解程度更好，而且全局把握也更好的情况下，我觉得很多一开始觉得不错的地方， &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="Zion Blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+<body>
+	<header id="header" class="inner"><h1><a href="/">Zion Blog</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+	<li><a href="/about-me">About me</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+	<li><a href="/about-me">About me</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="https://www.google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:zionwu.github.io">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		
+		
+    
+		
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="https://www.google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:zionwu.github.io">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h2 class="title">浅谈重构--《重构》读书笔记</h2>
+	<div class="entry-content"><p>以前听到重构这个词的时候，第一印象对软件的代码做大规模的调整，仿佛当今遍地都在进行的事情&mdash;拆迁重建，推倒重来。因此也一直觉得重构是一项很高级的活动，自己可能还远没有这种重构的能力。而在工作中，随着自己对代码理解程度更好，而且全局把握也更好的情况下，我觉得很多一开始觉得不错的地方，现在看起来都还能有所改进。所以从数个月前，就觉得项目的代码需要重构了，但是基于对重构的浅薄的第一印象，又觉得抽不出时间来进行这么大的工程。直到看了《<a href="http://book.douban.com/subject/4262627/">重构</a>》这边书，我对“重构&#8221;的认识才有了翻天覆地的改变。</p>
+
+<h2>一. What-什么是重构</h2>
+
+<p>书中对重构的定义如下：</p>
+
+<blockquote><p>重构（名词）：对软件内部结构的一种调整，目的是在不改变软件可观察行为的前提下，<strong>提高其可理解性，降低其修改成本</strong>。<br/>
+重构（动词）：使用一系列重构手法，在不改变软件可观察行为的前提下，调整其结构。</p></blockquote>
+
+<p>这两个定义看起来还是高上大，让人不明觉厉。其实作者一开始是给了一个重构的例子，在该例子中，作者通过逐步的对代码的调整，最终达到了重构的目的。对比上面的定义，我更喜欢一下的定义。</p>
+
+<blockquote><p>重构技术就是以<strong>微小</strong>的步伐修改程序，如果你犯下错误，很容易便可以发现它。</p></blockquote>
+
+<p>这个定义强调了重构是基于微小的步伐进行的。也就是说，重构并非是作为一种项目的形式存在，而是作为一种编程的习惯。在日常的编程中，我们都可以进行重构，让代码的质量不断提高。哪怕每次都是微小的改动，滴水穿石，项目的代码质量得到提升。以上是我从书中收获到最重要的知识，也就是对重构有了新的观念。另一方面，重构之所以需要以微小步伐进行，是因为我们必须保证软件可观察行为不变，也就是说功能不能回归。要做到这样，我们首先需要有一套可靠的测试机制，比如单元测试与回归测试。每次修改都以小步伐进行，改一点，测一点，这样才能保证不会带来回归。其次我们往往是在添加新代码的时候同时调整旧代码，那么我们必须遵循两者不能同时进行的原则。书中用Kent Beck的两顶帽子来比喻：</p>
+
+<blockquote><p>使用重构技术开发软件时，你把自己的时间分配给两种截然不同的行为：添加新功能以及重构。添加新功能时，你不应该修改已有代码，只管添加新功能。重构时你不能再添加功能，只管改进程序结构。 &hellip;&hellip;.软件开发过程中，你可能发现自己经常变换帽子。首先你会尝试添加新功能，然后意识到，如果把程序结构改一下，功能的添加会容易的多，如果你换一顶帽子，做一会重构工作。结构调整好后，你又换上原先的帽子，继续添加新功能。</p></blockquote>
+
+<p>所谓两顶帽子，也就是指重构和添加新功能，每次你都只能戴一顶。</p>
+
+<h2>二. Why -为什么要重构</h2>
+
+<p>上面的定义提到，重构是提高软件的可理解性与降低修改成本，这么说过于简单了。和学校里只用写一次用来交作业的程序不用，软件是在不断成长，代码在开发过程中不断被修改。原先的一些设计，随着需求的增加或者功能的改进，已经不再适用了，在原有代码上添加新功能过于困难，那么就有必要对原有的代码进行重构。另一方面，我们需要改动的代码，往往是别人写的，或者是自己很早前写的，通过重构，我们可以更深入的理解现有代码，甚至找出代码中潜在的bug。总的来说，重构是为了提高代码质量，降低代码的复杂度。</p>
+
+<h2>三. Where &ndash; 哪里需要进行重构</h2>
+
+<p>要进行重构，首先我们要知道哪些地方是要进行重构的。书里的第三章给出了一个详细的列表。 我挑选了一些并做了简单的解释：</p>
+
+<h4>3.1 Duplicate Code (重复代码)</h4>
+
+<p>编程的一项重要原则是DRY，即do not repeat yourself。如果有重复的代码，那么就必须将其合而为一。</p>
+
+<h4>3.2 ong Method (过长函数)</h4>
+
+<p>一个函数只应该做一件事。太长的函数一方面说明了函数做的事情可能太多了，还有就是可读性也不高，因此需要将其分解成小函数。小函数支持“解释能力，共享能力和选择能力”。</p>
+
+<h4>3.3 Large Class (过大的类）</h4>
+
+<p>和函数一样，每个类的责任都应该明确。当一个类拥有太多责任的时候，这个类往往都很大。这样的类难以理解，调用者用起来很不方便。那么这时候需要将该类分解成几个类，或者使用继承将责任分摊到子类中。</p>
+
+<h4>3.4 Divergent Change(发散式变化) 与 Shotgun Surgery（散弹式修改)</h4>
+
+<p>发散式变化指的是一个类受多种变化影响。而散弹式修改则相反。指一个变化引发多个类的相应改动。两者都需要修改代码，使得外界变化与需要修改的类一一对应。</p>
+
+<h4>3.5 Switch Statements (switch 惊悚现身)</h4>
+
+<p>在面向对象的程序中，要少用switch语句。从本质上，switch语句的问题在于重复。大多数的情况下，可以用多态来替换它。</p>
+
+<h4>3.6 Comments (过多的注释)</h4>
+
+<p>当出现长长的注释的时候，往往是标志着糟糕的代码。因为良好的代码结构是能够自然清晰表现出程序的逻辑的。所以当有长注释的时候，就要考虑重构了。</p>
+
+<h2>四. How &ndash; 如何进行重构</h2>
+
+<p>这是《重构》这本书的最主要的内容。作者从函数，对象，数据，表达式等各方面提出了数十条具体的重构的手法。下面我将选择几个自己认为较有启发的手法来介绍。</p>
+
+<h3>4.1 查询取代临时变量</h3>
+
+<p>如果程序中临时变量用来保存某一表达式的运算结果，那么可以考虑将表达式提炼到一个函数中，并将临时变量的引用点替换为对新函数的使用。书中的例子如下：</p>
+
+<pre><code>double base_price = quantity * itemPrice;
+if (base_price &gt; 1000)
+    return base_price * 0.95;
+else 
+    return base_price * 0.98;
+</code></pre>
+
+<p>经过重构后会是</p>
+
+<pre><code>if (basePrice() &gt; 1000)
+    return basePrice() * 0.95;
+else
+    return basePrice() * 0.98;
+...
+double basePrice() {
+    return quantity * itemPrice;
+}
+</code></pre>
+
+<p>这个例子很简单。咋一看这种重构似乎完全没有必要，同一个值重复计算了3次，这难道不是浪费时间么。“过早优化是万恶之源”， 在一开始时，比起程序的性能，我们更应该关注程序的结构。一旦程序有了良好的结构，那么针对功能问题进行优化将变得简单。特别是引发性能问题的往往是代码中的某一小块。那么去除临时变量就能使程序的结构变好么？上面的例子似乎不能很好说明问题。但是想象一个数百行的程序，对临时变量的使用散布其中，那么使用临时变量就不是一个好主意了。因为代码阅读者难以理解临时变量的用途，这个变量在这个scope里还有效么？这个变量的值中途的会被修改么？诸如此类。《代码大全》里也说过，研究表明变量定义的位置与使用它的位置的距离与代码的质量成反比。如果将临时变量变成函数，那么就减少了程序中的状态的数量，因此减少了程序的复杂度。</p>
+
+<h3>4.2 移除对参数的赋值</h3>
+
+<p>如果代码对一个函数进行赋值，那么以一个临时变量代替该参数的位置。</p>
+
+<pre><code>int discount(int input, int quantity, int yearToDate) {
+   if (input &gt; 50)  input -= 2;
+   ...
+}
+</code></pre>
+
+<p>在重构后是：</p>
+
+<pre><code>int discount (int input, int quantity, int yearToDate) 『
+    int result = input; 
+    if (result &gt; 50) result -=2;
+    ...
+}
+</code></pre>
+
+<p>在项目的代码中我也曾经看到过这种风格的代码，当时还不能理解。之所以要重构，是因为原来的情况下降低了代码的清晰度，混用了按值传递与按引用传递两种参数传递方式。Java是按值传递，对参数赋值不会影响调用端，但是接触过引用传递的人可能会混淆。还有就是如果参数只表示“传进来的参数”，那么代码就更清晰了，这遵循了一个变量只有一个用途的原则。</p>
+
+<h3>4.3 封装集合</h3>
+
+<p>如果你有一个函数返回集合，那么应该让该类返回一个只读的副本，并且在类中提供移除和添加集合元素的函数。</p>
+
+<pre><code>public class Person {
+    public Set getCourses() {...}
+    public void setCourses(Set s) {...}
+}
+</code></pre>
+
+<p>在重构后是：</p>
+
+<pre><code>public class Person {
+    public unmodifiable Set getCourses() {...}
+    public addCourse(Course c) {...}
+    public removeCourse(Course c) {...}
+}
+</code></pre>
+
+<p>这么做的原因是，原先的类封装并不严格，实际上暴露了类中集合的数据结构。通过重构，调用者通过getter方法只能取道只读副本，要改变集合必须调用类中的函数，这样就将集合的数据结构封装起来。调用者所面对的是这个类的抽象层次，而不是类内部更具体的概念。这遵循了概念一致性的原则。整个类处于同一个抽象层次上。 更具体而言，我们可以方便地替换类中集合的实际数据结构而不用担心影响调用者。</p>
+
+<h3>4.4 取代类型码</h3>
+
+<p>取代类型码的原因在于编译器无法对其做有效的类型检查，因为它只是一个数值。而接收类型码的函数，参数也只是一个普通数值，这样降低了可读性，从而导致bug。取代类型码，有三种模式，分别是用类替换，用子类替换和用State/Strategy替换。</p>
+
+<h4>4.4.1 用类替换</h4>
+
+<p>当类型码是纯数据的时候，即不会在switch语句中引起行为变化时，才能够用此种模式。否则则要考虑后面两种模式了。书中例子如下：</p>
+
+<pre><code>class Person {
+    public static final int O = 0;
+    public static final int A = 1;
+    public static final int B = 2;
+    public static final int AB = 3;
+
+    private int _bloodGroup;
+    public Person(int bloodGroup) {
+        _bloodGroup = bloodGroup;
+    }
+    public void setBloodGroup(int arg) {
+        _bloodGroup = arg;
+    }
+    public int getBloodGroup() {
+        return _bloodGroup; 
+    }
+}
+</code></pre>
+
+<p>通过用类BloodGroup类替换，重构后的代码如下：</p>
+
+<pre><code> class BloodGroup {
+    public static final BloodGroup O = BloodGroup(0);
+    public static final BloodGroup A = BloodGroup(1);
+    public static final BloodGroup B = BloodGroup(2);
+    public static final BloodGroup AB = BloodGroup(3);
+
+    private final int _code;
+    private BloodGroup(int code) { _code = code; }     
+ }
+
+ class Person {
+    private BloodGroup _bloodGroup;
+    public Person(BloodGroup bloodGroup) {
+        _bloodGroup = bloodGroup;
+    }
+    public void setBloodGroup(BloodGroup arg) {
+        _bloodGroup = arg;
+    }
+    public BloodGroup getBloodGroup() {
+        return _bloodGroup; 
+    }
+}
+</code></pre>
+
+<p>值得注意的是，这里我直接得到了最终的重构结构，而忽略了中间逐步迭代的过程。书中给出了详细的中间过程，教我们如果通过微小的多次改动，先引入BloodGroup类，然后替换到掉调用端的代码，最后删掉旧的使用数值的函数，从而完成重构过程。我们应该认识到，引入一个类来替代类型码，能够提供更好的抽象而提高可读性，而专门的类型也使代码更加健壮。</p>
+
+<h4>4.4.2 用子类替换</h4>
+
+<p>前面提到过，如果类型码是影响到了switch中的行为，那么应该使用子类来替换，这是为了发挥多态系统的作用，使子类能够根据自己类型而执行正确的行为，而不是依赖于数值型的类型码。但是在两种情况下，即(1)类型码的值在对象创建后会改变，(2)类型码宿主类已经存在子类了，那么就必须使用下一节介绍的State/Strategy模式来替换。书中的例子如下：</p>
+
+<pre><code>class Employee {
+    private static _type;
+    static final int ENGINEER = 0;
+    static final int SALESMAN = 1;
+    static final int MANAGER = 2;
+
+    Employee (int type) { _type = type; }
+    int getType() { return _type; }
+}
+</code></pre>
+
+<p>重构后的代码如下：</p>
+
+<pre><code>class Engineer extends Employee {
+    int getType() { return Employee.ENGINEER; }
+}
+
+class Employee {
+    ....
+    abstract int getType();
+
+    static Employee create(int type) {
+        switch (type) {
+            case ENGINEER: return new Engineer();
+            case SALESMAN: return new Salesman();
+            case MANAGER:  return new Manager();
+        }
+    }
+</code></pre>
+
+<p>通过引入子类，我们将对不同行为的了解，从类用户转移到了类自身。原来的情况下，用户需要知道类所拥有的类型以及对应的行为，重构后，用户之需要调用同一个方法，不同的子类会有有不同的行为。这利用了多态的威力，减轻了用户的负担。</p>
+
+<h4>4.4.3 State/Strategy模式替换</h4>
+
+<p>如上节提到的，如果状态码会改变，或者宿主类已经有子类了，那么就必须用State/Strategy模式替换。沿用上节的Employee例子，在原来的类中添加一个新的方法：</p>
+
+<pre><code> class Employee {
+    ....
+    int payAmount () {
+        switch(_type) {
+            case ENGINEER: return _monthlySalary;
+            case SALESMAN: return _monthlySalary + _commision;
+            case MANAGER:  return _monthlySalary + _bonus;
+        }
+    }
+}
+</code></pre>
+
+<p>在重构后代码是：</p>
+
+<pre><code>class EmployeeType {
+    static final int ENGINEER = 0;
+    static final int SALESMAN = 1;
+    static final int MANAGER = 2;
+    abstract int getTypeCode();
+    static EmployeeType newType(int code) {
+        switch (code) {
+            case ENGINEER: return new Engineer();
+            case SALESMAN: return new Salesman();
+            case MANAGER:  return new Manager();
+        }
+    }
+}
+
+class Engineer extends EmployeeType {
+    int getType() { return Employee.ENGINEER; }
+    int payAmount(Employee e) { return e.getMonthlySalary; }
+}
+
+class Salesman extends EmployeeType { ... }
+class Manager  extends EmployeeType { ... }
+
+class Employee {
+    private EmployeeType _type;
+    int payAmount () {
+       _type.payAmount (this);
+    }  
+}
+</code></pre>
+
+<p>其实仔细观察，这个和用类替换的区别在于，并不只用单个类来替换类型码，而是先创建一个父类，根据不用的类型码创建不同的子类，并将相应的行为迁移到子类当中。</p>
+
+<h3>4.5 引入空对象</h3>
+
+<p>当在代码中需要再三检查某个对象是否为null的时候，就可以将null值替换为null对象。</p>
+
+<pre><code>if（customer == null） plan = BillingPlan.basic();
+else plan = customer.getPlan();
+</code></pre>
+
+<p>在重构后将是：</p>
+
+<pre><code>plan = customer.getPlan();
+
+public class NullCustomer extends Customer implements Nullable {
+    public Plan getPlan() { return BillingPlan.basic(); }
+}
+
+ public class Customer {
+    private nullObject = new NullCustomer();
+    public static getNull() { return nullObject;}
+ }
+</code></pre>
+
+<p>通过一个null对象，我们利用了多态的好处，即不需要知道对象是什么，只管调用它的某个行为就可以了。例子中如果是NullCustomer,那么getPlan函数就会返回BillingPlan.basic()。这样就不需要重复检测null值并针对空值做特别处理。空对象一定是一个常量，它是不可变的，因此可用Singleton的模式。在Customer类中我们添加了一个工厂方法返回Null Object。而让NullCustomer实现Nullable接口是为了在类型上表明这是一个null object。我们也可以在Customer中添加isNull()的方法并在NullCustomer中重载返回true来达到这个目的。类似的手段在Java库中也存在，比如浮点数中的NaN, POSITIVE_INFINITY都是特例类，它们都降低了“错误处理”的开销。</p>
+
+<h3>4.6 以工厂方法取代构造函数</h3>
+
+<p>如果在创建对象时不仅仅是做简单的构建动作，那么可以将构造函数替换为工厂方法。</p>
+
+<pre><code>Employee (int type) {
+    _type = type;
+}
+</code></pre>
+
+<p>变成：</p>
+
+<pre><code>static Employee create(int type) {
+    return new Employee(type);
+}
+</code></pre>
+
+<p>通过使用工厂方法，我们拥有了更多的灵活性和对实例的控制。比如工厂方法中，可以根据情况返回不同的实现的子类。还有如果该类是功能类，使用工厂方法并将构造函数声明为private，我们可以控制该类的实例只有一个。</p>
+
+<h2>五. Summay &ndash; 总结</h2>
+
+<p>书中有许多妙语，个人最喜欢的是作者引用Kent Beck的一句话</p>
+
+<blockquote><p>&ldquo;我不是伟大的程序员，我只是一个有着优秀习惯的程序员。”</p></blockquote>
+
+<p>重构并非什么高上大的概念，也不仅仅是一项技术，更是一个优秀的习惯。希望本文能够让你对重构有个大概的正确认识，避免像我一开始那样先入为主地错误认识。想要更深入的理解，强烈推荐阅读《<a href="http://book.douban.com/subject/4262627/">重构</a>》这本书.</p>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-25T21:09:00+08:00" pubdate data-updated="true">Mar 25<sup>th</sup>, 2014</time></div>
+	<div class="tags">
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2016
+
+    Zion Wu
+
+</footer>
+	<script src="/javascripts/slash.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+
+
+
+
+</body>
+</html>
