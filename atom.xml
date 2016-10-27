@@ -4,11 +4,7 @@
   <title><![CDATA[Zion Blog]]></title>
   <link href="http://zionwu.github.io/atom.xml" rel="self"/>
   <link href="http://zionwu.github.io/"/>
-<<<<<<< HEAD
   <updated>2016-10-28T01:24:36+08:00</updated>
-=======
-  <updated>2014-06-29T00:49:00+08:00</updated>
->>>>>>> a01d2c5da0b929e912afcaa6f477f23b0eead9b6
   <id>http://zionwu.github.io/</id>
   <author>
     <name><![CDATA[Zion Wu]]></name>
@@ -18,7 +14,6 @@
 
   
   <entry>
-<<<<<<< HEAD
     <title type="html"><![CDATA[让我大呼过瘾的编程书]]></title>
     <link href="http://zionwu.github.io/blog/2016/10/28/rang-wo-da-hu-guo-yin-de-bian-cheng-shu/"/>
     <updated>2016-10-28T00:29:02+08:00</updated>
@@ -40,8 +35,6 @@
   </entry>
   
   <entry>
-=======
->>>>>>> a01d2c5da0b929e912afcaa6f477f23b0eead9b6
     <title type="html"><![CDATA[redis源码阅读心得（一）]]></title>
     <link href="http://zionwu.github.io/blog/2014/06/28/redisyuan-ma-yue-du-xin-de-(%5B%3F%5D-)/"/>
     <updated>2014-06-28T23:51:00+08:00</updated>
@@ -53,11 +46,8 @@
 <p>阅读redisd代码的过程充满了乐趣。印象最深刻便是我在深夜时发现了一个bug，提出了issue和<a href="https://github.com/antirez/redis/pull/1788">pull request</a>, 之后就兴奋得睡不着觉。 而最终成功merge到redis的<a href="https://github.com/antirez/redis">repos</a>时，十分高兴，这是自己第一次对开源项目的贡献。想到以后redis的新版本，包含了我的小小的贡献，被广泛使用，就很有成就感。难怪那么多人痴迷于开源软件了！</p>
 
 <p>虽然已经有了huangz的书了，但是他书中是对redis的设计和原理进行客观的剖析。而我这个系列的文章，是从我的角度，分析和评价redis代码，论述认为值得学习的设计或者代码技巧，同时也对不合理的地方进行评价。</p>
-<<<<<<< HEAD
 
 <p>test</p>
-=======
->>>>>>> a01d2c5da0b929e912afcaa6f477f23b0eead9b6
 ]]></content>
   </entry>
   
