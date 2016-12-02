@@ -4,7 +4,11 @@
   <title><![CDATA[Zion Blog]]></title>
   <link href="http://zionwu.github.io/atom.xml" rel="self"/>
   <link href="http://zionwu.github.io/"/>
+<<<<<<< HEAD
   <updated>2016-12-03T00:31:50+08:00</updated>
+=======
+  <updated>2016-10-28T01:24:36+08:00</updated>
+>>>>>>> 9f8f42c6e18c4edcace0f706ebedcedd7eb3299a
   <id>http://zionwu.github.io/</id>
   <author>
     <name><![CDATA[Zion Wu]]></name>
@@ -46,6 +50,11 @@
 <p>阅读redisd代码的过程充满了乐趣。印象最深刻便是我在深夜时发现了一个bug，提出了issue和<a href="https://github.com/antirez/redis/pull/1788">pull request</a>, 之后就兴奋得睡不着觉。 而最终成功merge到redis的<a href="https://github.com/antirez/redis">repos</a>时，十分高兴，这是自己第一次对开源项目的贡献。想到以后redis的新版本，包含了我的小小的贡献，被广泛使用，就很有成就感。难怪那么多人痴迷于开源软件了！</p>
 
 <p>虽然已经有了huangz的书了，但是他书中是对redis的设计和原理进行客观的剖析。而我这个系列的文章，是从我的角度，分析和评价redis代码，论述认为值得学习的设计或者代码技巧，同时也对不合理的地方进行评价。</p>
+<<<<<<< HEAD
+=======
+
+<p>test</p>
+>>>>>>> 9f8f42c6e18c4edcace0f706ebedcedd7eb3299a
 ]]></content>
   </entry>
   

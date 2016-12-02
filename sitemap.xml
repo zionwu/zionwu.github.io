@@ -65,21 +65,33 @@
   
   <url>
     <loc>http://zionwu.github.io/blog/archives/</loc>
+<<<<<<< HEAD
     <lastmod>2016-12-03T00:31:50+08:00</lastmod>
+=======
+    <lastmod>2016-10-28T01:24:36+08:00</lastmod>
+>>>>>>> 9f8f42c6e18c4edcace0f706ebedcedd7eb3299a
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://zionwu.github.io/</loc>
+<<<<<<< HEAD
     <lastmod>2016-12-03T00:31:50+08:00</lastmod>
+=======
+    <lastmod>2016-10-28T01:24:36+08:00</lastmod>
+>>>>>>> 9f8f42c6e18c4edcace0f706ebedcedd7eb3299a
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
     <loc>http://zionwu.github.io/about-me/</loc>
+<<<<<<< HEAD
     <lastmod>2016-12-03T00:31:50+08:00</lastmod>
+=======
+    <lastmod>2016-10-28T01:24:36+08:00</lastmod>
+>>>>>>> 9f8f42c6e18c4edcace0f706ebedcedd7eb3299a
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
