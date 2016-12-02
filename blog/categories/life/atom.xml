@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: life | Zion Blog]]></title>
+  <link href="http://zionwu.github.io/blog/categories/life/atom.xml" rel="self"/>
+  <link href="http://zionwu.github.io/"/>
+  <updated>2016-12-03T00:31:50+08:00</updated>
+  <id>http://zionwu.github.io/</id>
+  <author>
+    <name><![CDATA[Zion Wu]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[写在2012的末尾]]></title>
+    <link href="http://zionwu.github.io/blog/2012/12/30/xie-zai-2012de-mo-wei/"/>
+    <updated>2012-12-30T23:17:00+08:00</updated>
+    <id>http://zionwu.github.io/blog/2012/12/30/xie-zai-2012de-mo-wei</id>
+    <content type="html"><![CDATA[<p>一转眼，就来到了12年的末尾了。还记得去年的这个时候，一个人漫步在新加坡的街头，看着熙熙攘攘的庆祝的人群，独自品尝着孤单。孤单于人是有益，特别是这个喧嚷的时代，能够一个人静下来是多么重要。然而在新加坡，心却是焦躁不安的，直到踏上旅程那刻，才踏实下来。因为它早已知道我想要的是什么。回到国内，完成毕设，告别众人，开始工作，它再也没不安过了，因为我正走在了属于自己的道路上。</p>
+
+<p>Talk is cheap. 再多的话，也不过说给自己听罢了。此文是这个博客第一篇也是最后一篇絮絮叨叨的博文。以后的文章是记录和分享自己对技术的学习与思考。下一篇文章是介绍如何在VPS上搭建自己的博客。</p>
+
+<p>另外，2013的学习计划有以下几点:</p>
+
+<ul>
+<li>算法
+  实现重要的数据结构
+  实现重要的算法</li>
+<li>Ruby&amp;Rails
+  Ruby元编程
+  Ruby语言原理
+  Rails的应用</li>
+<li>Java
+  Java的语言特性，原理
+  Java web编程
+  OO编程以及设计模式</li>
+<li>操作系统
+  阅读Minix的内核代码
+  通过APUE学习系统编程
+  通过上面两项学习C++</li>
+</ul>
+
+
+<p>不怕慢，就怕站。厚积薄发, 相信时间的力量。</p>
+]]></content>
+  </entry>
+  
+</feed>
