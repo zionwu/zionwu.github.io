@@ -94,7 +94,7 @@
 
 <blockquote><p>在紧急情况中，飞行员的首要任务是保持飞机飞行，相比保证乘客与飞机安全，故障定位和排除是次要的。</p></blockquote>
 
-<p>另一方面，服务A是多节点部署，前面使用负载均衡。因此只需要将出问题的节点从负载均衡中移除，进行重启，而不需要担心服务会中断。这说明了<em>高可用的架构的重要性</em>，保证的服务的质量，也让我们更从容地处理问题。</p>
+<p>另一方面，服务A是多节点部署，前面使用负载均衡。因此只需要将出问题的节点从负载均衡中移除，进行重启，而不需要担心服务会中断。这说明了<em>高可用的架构的重要性</em>，保证了服务的质量，也让我们更从容地处理问题。</p>
 
 <p>同样的问题当日又出现了几次，而且在另外一个节点也出现了。因为原因尚未找到，也是通过重启解决。而在接下来的几天，就都恢复正常了。</p>
 
@@ -107,7 +107,7 @@
 <h3>使用jstack分析线程</h3>
 
 <p>当时使用了<em>top -H</em> 查看了导致高CPU使用率的线程，如下图所示： <br/>
-<img class="center" src="./../images/jdk/top-result.png"></p>
+<img class="center" src="/images/jdk/top-result.png"></p>
 
 <p>如图所示，服务A的数个线程的CPU使用率相当高。那么我们如何知道这些线程在应用中是干什么的呢？这就必须借助jstack了。在脚本中的命令如下：</p>
 
@@ -140,7 +140,7 @@
 <p>jstat -gcutil的结果如下： <br/>
 <img class="center" src="./../images/jdk/jstat-gcutil-result.png"></p>
 
-<p>jstat -gccapacity的结果如下； <br/>
+<p>jstat -gccapacity的结果如下：     <br/>
 <img class="center" src="./../images/jdk/jstat-gccapacity-result.png"></p>
 
 <p>上面两个图中的字段这里就不一一解释了，感兴趣的童鞋可以查看<a href="http://docs.oracle.com/javase/1.5.0/docs/tooldocs/share/jstat.html">官方文档</a>。可以看到，问题发生时应用的堆内存，不管是年轻代还是老年代，都基本耗尽了。因此JVM必须进行Full GC, 然而GC无法成功回收内存，应用就处于停滞了，同时GC线程不断尝试回收内存导致CPU上升。到这里，我们找到了导致了CPU过高的直接原因了。</p>
@@ -172,15 +172,15 @@
 
 <p>我们可以看到，排名前二的两个线程占用了超过50%的内存。我们点击展开，可以进一步查看线程内所引用的对象，如图所示：</p>
 
-<p><img class="center" src="./../images/jdk/mat-result3.png"></p>
+<p><img class="center" src="/images/jdk/mat-result3.png"></p>
 
 <p>线程内有org.apache.thrift.transport.TSocket对象，因此这是一个thrift服务的线程。而MyBatis相关的类说明线程对数据库进行了操作。其中org.apache.ibatis.executor.result.DefaultResultHandler对象基本占用了线程所有的内存，点击这个对象，如图所示：</p>
 
-<p><img class="center" src="./../images/jdk/mat-result4.png"></p>
+<p><img class="center" src="/images/jdk/mat-result4.png"></p>
 
 <p>可以看到，myBatis的查询结果里面，有多个Order对象。从这里我们可以知道是某个订单查询的thrift接口导致了问题。离真相只有一步之遥了，我们进一步查看线程中相关的类：</p>
 
-<p><img class="center" src="./../images/jdk/mat-result5.png"></p>
+<p><img class="center" src="/images/jdk/mat-result5.png"></p>
 
 <p>如上图所示，展开oracle.jdbc.driver.T4CPreparedStatement，对象中的oracle.jdbc.driver.OracleSql里的String的值就是这个接口查询数据库使用的SQL。</p>
 
