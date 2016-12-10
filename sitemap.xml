@@ -3,6 +3,12 @@
   
   
   <url>
+    <loc>http://zionwu.github.io/blog/2016/12/10/ru-he-shi-yong-jdkpou-xi-javaying-yong/</loc>
+    <lastmod>2016-12-10T21:55:35+08:00</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>http://zionwu.github.io/blog/2016/10/28/rang-wo-da-hu-guo-yin-de-bian-cheng-shu/</loc>
     <lastmod>2016-10-28T00:29:02+08:00</lastmod>
     <priority>0.8</priority>
@@ -65,25 +71,21 @@
   
   <url>
     <loc>http://zionwu.github.io/blog/archives/</loc>
-    <lastmod>2016-10-28T01:24:36+08:00</lastmod>
+    <lastmod>2016-12-10T23:59:36+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://zionwu.github.io/</loc>
-    <lastmod>2016-12-03T00:31:50+08:00</lastmod>
+    <lastmod>2016-12-10T23:59:36+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
     <loc>http://zionwu.github.io/about-me/</loc>
-<<<<<<< HEAD
-    <lastmod>2016-12-03T00:31:50+08:00</lastmod>
-=======
-    <lastmod>2016-10-28T01:24:36+08:00</lastmod>
->>>>>>> 9f8f42c6e18c4edcace0f706ebedcedd7eb3299a
+    <lastmod>2016-12-10T23:59:36+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
