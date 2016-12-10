@@ -108,11 +108,11 @@
 
 <p>jstack将发生问题那一刻应用的线程堆栈信息保存下来了，结果如下图所示：</p>
 
-<p><img class="center" src="./../images/jdk/jstack-result.png"></p>
+<p><img class="center" src="/images/jdk/jstack-result.png"></p>
 
 <p>从图中可见，jstack的结果包含了线程的名字，状态，持有或者等待的锁等信息，而第一行中的nid则是线程id的十六进制。即将图1的pid转为十六进制，在文件中搜索，就可以找到造成问题的线程。如下图所示：</p>
 
-<p><img class="center" src="./../images/jdk/jstack-result2.png"></p>
+<p><img class="center" src="/images/jdk/jstack-result2.png"></p>
 
 <p>可以看到这些线程都是GC线程。假设找到的线程不是GC线程，而是图2中的线程，那么通过线程名字，我们无法知道这些线程属于哪个模块，这是一个重要的经验教训：<em>要为所有线程池和线程合理的命名，这对定位问题十分重要。</em></p>
 
@@ -129,10 +129,10 @@
 
 
 <p>jstat -gcutil的结果如下： <br/>
-<img class="center" src="./../images/jdk/jstat-gcutil-result.png"></p>
+<img class="center" src="/images/jdk/jstat-gcutil-result.png"></p>
 
 <p>jstat -gccapacity的结果如下：     <br/>
-<img class="center" src="./../images/jdk/jstat-gccapacity-result.png"></p>
+<img class="center" src="/images/jdk/jstat-gccapacity-result.png"></p>
 
 <p>上面两个图中的字段这里就不一一解释了，感兴趣的童鞋可以查看<a href="http://docs.oracle.com/javase/1.5.0/docs/tooldocs/share/jstat.html">官方文档</a>。可以看到，问题发生时应用的堆内存，不管是年轻代还是老年代，都基本耗尽了。因此JVM必须进行Full GC, 然而GC无法成功回收内存，应用就处于停滞了，同时GC线程不断尝试回收内存导致CPU上升。到这里，我们找到了导致了CPU过高的直接原因了。</p>
 
@@ -145,7 +145,7 @@
 
 
 <p>结果如下图所示： <br/>
-<img class="center" src="./../images/jdk/jmap-histo-result.png"></p>
+<img class="center" src="/images/jdk/jmap-histo-result.png"></p>
 
 <p>可以看到，当时应用中的Order类的实例一共有将近10万个！Order类有很多String类型的字段，因此char[]和String的实例相当多。三者占用的内存高达1.4G。对正常运行时的应用使用同样的命令，发现正常情况下内存中不会有这么多订单类实例。那为什么应用中的Order类实例突然变得如此之多呢？是因为请求量太大导致的吗？还是其他原因？这时候就可以用到剖析java应用的大杀器&mdash;jmap heap dump。脚本中的命令是：</p>
 
@@ -155,11 +155,11 @@
 
 <p>jmap会把当时进程内存的详细情况dump到文件，可以使用jdk中的jhat或者VisualVM来查看。这里我们使用提供更加强大功能的eclipse <a href="http://www.eclipse.org/mat/">MAT</a>来查看。使用MAT打开heap dump文件，首页如下图所示：</p>
 
-<p><img class="center" src="./../images/jdk/mat-result1.png"></p>
+<p><img class="center" src="/images/jdk/mat-result1.png"></p>
 
 <p>这里我们主要使用的是dominator-tree这个功能。点击后如下图所示：</p>
 
-<p><img class="center" src="./../images/jdk/mat-result2.png"></p>
+<p><img class="center" src="/images/jdk/mat-result2.png"></p>
 
 <p>我们可以看到，排名前二的两个线程占用了超过50%的内存。我们点击展开，可以进一步查看线程内所引用的对象，如图所示：</p>
 
