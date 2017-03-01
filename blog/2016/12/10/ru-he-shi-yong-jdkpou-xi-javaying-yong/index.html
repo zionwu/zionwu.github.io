@@ -145,7 +145,7 @@
 
 
 <p>结果如下图所示： <br/>
-<img class="center" src="http://zionwu.github.io/images/jdk/top-result.pngjdk/jmap-histo-result.png"></p>
+<img class="center" src="http://zionwu.github.io/images/jdk/jmap-histo-result.png"></p>
 
 <p>可以看到，当时应用中的Order类的实例一共有将近10万个！Order类有很多String类型的字段，因此char[]和String的实例相当多。三者占用的内存高达1.4G。对正常运行时的应用使用同样的命令，发现正常情况下内存中不会有这么多订单类实例。那为什么应用中的Order类实例突然变得如此之多呢？是因为请求量太大导致的吗？还是其他原因？这时候就可以用到剖析java应用的大杀器&mdash;jmap heap dump。脚本中的命令是：</p>
 
@@ -232,7 +232,7 @@
 
 
 </div>
-	<footer id="footer" class="inner">Copyright &copy; 2016
+	<footer id="footer" class="inner">Copyright &copy; 2017
 
     Zion Wu
 
